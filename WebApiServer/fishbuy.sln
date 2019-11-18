@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29503.13
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "fishbuy", "fishbuy\fishbuy.csproj", "{A2DFABB6-974A-4F41-B57F-3AB4AAA4EA52}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A2DFABB6-974A-4F41-B57F-3AB4AAA4EA52}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2DFABB6-974A-4F41-B57F-3AB4AAA4EA52}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2DFABB6-974A-4F41-B57F-3AB4AAA4EA52}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2DFABB6-974A-4F41-B57F-3AB4AAA4EA52}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {9A11B17C-DC8F-4583-B72F-27348304C816}
+	EndGlobalSection
+EndGlobal
