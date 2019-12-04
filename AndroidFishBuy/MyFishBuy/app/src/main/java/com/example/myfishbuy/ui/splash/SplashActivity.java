@@ -8,7 +8,6 @@ import android.view.WindowManager;
 
 import com.example.myfishbuy.MainActivity;
 import com.example.myfishbuy.R;
-
 import static java.lang.Thread.sleep;
 
 
