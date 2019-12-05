@@ -120,7 +120,7 @@ namespace fishbuy.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("{username}/goods")]
+        [HttpGet("{username}/posts")]
         public ActionResult<List<Post>> GetUserGoods(string username)
         {
             _logger.LogInformation(nameof(GetUserGoods) + ": " + username);
