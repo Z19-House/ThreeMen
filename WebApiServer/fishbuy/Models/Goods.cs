@@ -8,6 +8,7 @@ namespace fishbuy.Models
         public Goods()
         {
             Comment = new HashSet<Comment>();
+            Media = new HashSet<Media>();
         }
 
         public int GoodsId { get; set; }
@@ -23,5 +24,6 @@ namespace fishbuy.Models
 
         public virtual User User { get; set; }
         public virtual ICollection<Comment> Comment { get; set; }
+        public virtual ICollection<Media> Media { get; set; }
     }
 }

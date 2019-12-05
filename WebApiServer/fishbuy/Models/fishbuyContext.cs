@@ -17,15 +17,9 @@ namespace fishbuy.Models
 
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<Goods> Goods { get; set; }
+        public virtual DbSet<Media> Media { get; set; }
         public virtual DbSet<User> User { get; set; }
 
-        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        //{
-        //    if (!optionsBuilder.IsConfigured)
-        //    {
-        //        optionsBuilder.UseMySQL("Server=localhost;User Id=miho;Password=Qq!11111;Database=fishbuy");
-        //    }
-        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -146,6 +140,42 @@ namespace fishbuy.Models
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("GOODS_ibfk_1");
+            });
+
+            modelBuilder.Entity<Media>(entity =>
+            {
+                entity.ToTable("MEDIA", "fishbuy");
+
+                entity.HasIndex(e => e.GoodsId)
+                    .HasName("GOODS_ID");
+
+                entity.Property(e => e.MediaId)
+                    .HasColumnName("MEDIA_ID")
+                    .HasMaxLength(128)
+                    .IsUnicode(false)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.GoodsId)
+                    .HasColumnName("GOODS_ID")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ResType)
+                    .IsRequired()
+                    .HasColumnName("RES_TYPE")
+                    .HasMaxLength(32)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ResUri)
+                    .IsRequired()
+                    .HasColumnName("RES_URI")
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Goods)
+                    .WithMany(p => p.Media)
+                    .HasForeignKey(d => d.GoodsId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("MEDIA_ibfk_1");
             });
 
             modelBuilder.Entity<User>(entity =>

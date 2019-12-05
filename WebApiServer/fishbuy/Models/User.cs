@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
 
 namespace fishbuy.Models
 {
@@ -13,11 +12,8 @@ namespace fishbuy.Models
         }
 
         public int UserId { get; set; }
-        [Required]
         public string UserName { get; set; }
-        [Required]
         public string Nickname { get; set; }
-        [Required]
         public string Password { get; set; }
         public string Phone { get; set; }
         public string Birthdate { get; set; }

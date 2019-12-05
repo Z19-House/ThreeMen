@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using fishbuy.Models;
+﻿using fishbuy.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace fishbuy.Controllers
 {
@@ -30,9 +29,45 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
-        public ActionResult<string> GetAllGoods()
+        public ActionResult<List<Goods>> GetAllGoods(int skip = 0, int take = 20)
         {
-            return Ok();
+            var list = new List<Goods>();
+            for (int i = 1; i <= take; i++)
+            {
+                list.Add(new Goods
+                {
+                    UserId = _context.User.FirstOrDefault()?.UserId ?? 1,
+                    GoodsId = skip + i,
+                    Title = $"第{skip + i}个",
+                    Description = $"第{skip + i}个描述文字",
+                    UpTime = DateTime.Now.AddDays(-1).ToString("yyyy/mm/dd"),
+                    EditTime = DateTime.Now.ToString("yyyy/mm/dd"),
+                    Address = "河南省洛阳市",
+                    Price = 100 * (skip + i),
+                    Status = "on_sale",
+                    Tags = "Good",
+                    Media = new List<Media>
+                    {
+                        new Media
+                        {
+                            GoodsId=skip + i,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri="https://i.loli.net/2019/12/05/3BQpGcF2Cg9NAaT.png"
+                        },
+                        new Media
+                        {
+                            GoodsId=skip + i,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri="https://i.loli.net/2019/12/05/SXp9wcBiHqrCODu.png"
+                        }
+                    },
+                    User = _context.User.FirstOrDefault(),
+                });
+
+            }
+            return list;
         }
 
         /// <summary>
@@ -43,9 +78,58 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("{goodsId}")]
-        public ActionResult<string> GetGoods(string goodsId)
+        public ActionResult<Goods> GetGoods(int goodsId)
         {
-            return Ok();
+            return new Goods
+            {
+                UserId = 1,
+                GoodsId = goodsId,
+                Title = $"第{goodsId}个",
+                Description = $"第{goodsId}个描述文字",
+                UpTime = DateTime.Now.AddDays(-1).ToString("yyyy/mm/dd"),
+                EditTime = DateTime.Now.ToString("yyyy/mm/dd"),
+                Address = "河南省洛阳市",
+                Price = 100 * goodsId,
+                Status = "on_sale",
+                Tags = "Good",
+                User = _context.User.FirstOrDefault(),
+                Media = new List<Media>
+                    {
+                        new Media
+                        {
+                            GoodsId=goodsId,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri="https://i.loli.net/2019/12/05/3BQpGcF2Cg9NAaT.png"
+                        },
+                        new Media
+                        {
+                            GoodsId=goodsId,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri="https://i.loli.net/2019/12/05/SXp9wcBiHqrCODu.png"
+                        }
+                    },
+                Comment = new List<Comment>()
+                {
+                    new Comment
+                    {
+                        GoodsId= goodsId ,
+                        UserId=_context.User.FirstOrDefault()?.UserId ?? 1,
+                        CommentId=Guid.NewGuid().ToString(),
+                        UpTime=DateTime.Now.AddHours(-1).ToString("yyyy/mm/dd"),
+                        Comment1="第1个评论"
+                    },
+                    new Comment
+                    {
+                        GoodsId= goodsId ,
+                        UserId=_context.User.FirstOrDefault()?.UserId ?? 1,
+                        CommentId=Guid.NewGuid().ToString(),
+                        UpTime=DateTime.Now.AddHours(-1).ToString("yyyy/mm/dd"),
+                        Comment1="第2个评论"
+                    }
+                }
+            };
         }
 
         /// <summary>
