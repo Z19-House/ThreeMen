@@ -11,12 +11,12 @@ namespace fishbuy.Controllers
     [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
-    public class GoodsController : ControllerBase
+    public class PostController : ControllerBase
     {
-        private readonly ILogger<GoodsController> _logger;
+        private readonly ILogger<PostController> _logger;
         private readonly FishbuyContext _context;
 
-        public GoodsController(ILogger<GoodsController> logger, FishbuyContext context)
+        public PostController(ILogger<PostController> logger, FishbuyContext context)
         {
             _logger = logger;
             _context = context;
@@ -26,38 +26,37 @@ namespace fishbuy.Controllers
         /// 获取所有发布内容
         /// </summary>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
-        public ActionResult<List<Goods>> GetAllGoods(int skip = 0, int take = 20)
+        public ActionResult<List<Post>> GetAllPosts(int skip = 0, int take = 20)
         {
-            var list = new List<Goods>();
+            var list = new List<Post>();
             for (int i = 1; i <= take; i++)
             {
-                list.Add(new Goods
+                list.Add(new Post
                 {
                     UserId = _context.User.FirstOrDefault()?.UserId ?? 1,
-                    GoodsId = skip + i,
+                    PostId = skip + i,
                     Title = $"第{skip + i}个",
-                    Description = $"第{skip + i}个描述文字",
-                    UpTime = DateTime.Now.AddDays(-1).ToString("yyyy/mm/dd"),
-                    EditTime = DateTime.Now.ToString("yyyy/mm/dd"),
+                    Content = $"第{skip + i}个描述文字",
+                    UpTime = DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd"),
+                    EditTime = DateTime.Now.ToString("yyyy/MM/dd"),
                     Address = "河南省洛阳市",
                     Price = 100 * (skip + i),
                     Status = "on_sale",
                     Tags = "Good",
-                    Media = new List<Media>
+                    MediaLink = new List<MediaLink>
                     {
-                        new Media
+                        new MediaLink
                         {
-                            GoodsId=skip + i,
+                            PostId=skip + i,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
                             ResUri="https://i.loli.net/2019/12/05/3BQpGcF2Cg9NAaT.png"
                         },
-                        new Media
+                        new MediaLink
                         {
-                            GoodsId=skip + i,
+                            PostId=skip + i,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
                             ResUri="https://i.loli.net/2019/12/05/SXp9wcBiHqrCODu.png"
@@ -73,38 +72,38 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 获取某条发布内容
         /// </summary>
-        /// <param name="goodsId"></param>
+        /// <param name="postId"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet("{goodsId}")]
-        public ActionResult<Goods> GetGoods(int goodsId)
+        [HttpGet("{postId}")]
+        public ActionResult<Post> GetPost(int postId)
         {
-            return new Goods
+            return new Post
             {
                 UserId = 1,
-                GoodsId = goodsId,
-                Title = $"第{goodsId}个",
-                Description = $"第{goodsId}个描述文字",
-                UpTime = DateTime.Now.AddDays(-1).ToString("yyyy/mm/dd"),
-                EditTime = DateTime.Now.ToString("yyyy/mm/dd"),
+                PostId = postId,
+                Title = $"第{postId}个",
+                Content = $"第{postId}个描述文字",
+                UpTime = DateTime.Now.AddDays(-1).ToString("yyyy/MM/dd"),
+                EditTime = DateTime.Now.ToString("yyyy/MM/dd"),
                 Address = "河南省洛阳市",
-                Price = 100 * goodsId,
+                Price = 100 * postId,
                 Status = "on_sale",
                 Tags = "Good",
                 User = _context.User.FirstOrDefault(),
-                Media = new List<Media>
+                MediaLink = new List<MediaLink>
                     {
-                        new Media
+                        new MediaLink
                         {
-                            GoodsId=goodsId,
+                            PostId=postId,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
                             ResUri="https://i.loli.net/2019/12/05/3BQpGcF2Cg9NAaT.png"
                         },
-                        new Media
+                        new MediaLink
                         {
-                            GoodsId=goodsId,
+                            PostId=postId,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
                             ResUri="https://i.loli.net/2019/12/05/SXp9wcBiHqrCODu.png"
@@ -114,19 +113,19 @@ namespace fishbuy.Controllers
                 {
                     new Comment
                     {
-                        GoodsId= goodsId ,
+                        PostId= postId ,
                         UserId=_context.User.FirstOrDefault()?.UserId ?? 1,
                         CommentId=Guid.NewGuid().ToString(),
-                        UpTime=DateTime.Now.AddHours(-1).ToString("yyyy/mm/dd"),
-                        Comment1="第1个评论"
+                        UpTime=DateTime.Now.AddHours(-1).ToString("yyyy/MM/dd"),
+                        Content="第1个评论"
                     },
                     new Comment
                     {
-                        GoodsId= goodsId ,
+                        PostId= postId ,
                         UserId=_context.User.FirstOrDefault()?.UserId ?? 1,
                         CommentId=Guid.NewGuid().ToString(),
-                        UpTime=DateTime.Now.AddHours(-1).ToString("yyyy/mm/dd"),
-                        Comment1="第2个评论"
+                        UpTime=DateTime.Now.AddHours(-1).ToString("yyyy/MM/dd"),
+                        Content="第2个评论"
                     }
                 }
             };
@@ -135,26 +134,24 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 发布内容
         /// </summary>
-        /// <param name="goods"></param>
+        /// <param name="post"></param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost("new")]
-        public ActionResult<string> PostGoods([FromBody]object goods)
+        public ActionResult<string> PostNew([FromBody]object post)
         {
-            return Ok();
+            return CreatedAtAction(nameof(PostNew), post);
         }
 
         /// <summary>
         /// 编辑内容
         /// </summary>
-        /// <param name="goodsId"></param>
-        /// <param name="goods"></param>
+        /// <param name="postId"></param>
+        /// <param name="post"></param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpPut("{goodsId}")]
-        public ActionResult<string> EditGoods(string goodsId, [FromBody]object goods)
+        [HttpPut("{postId}")]
+        public ActionResult<string> EditPost(string postId, [FromBody]object post)
         {
             return Ok();
         }
@@ -162,12 +159,12 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 删除内容
         /// </summary>
-        /// <param name="goodsId"></param>
+        /// <param name="postId"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpDelete("{goodsId}")]
-        public ActionResult<string> DeleteGoods(string goodsId)
+        [HttpDelete("{postId}")]
+        public ActionResult<string> DeletePost(string postId)
         {
             return Ok();
         }
@@ -175,27 +172,25 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 发布评论
         /// </summary>
-        /// <param name="goodsId"></param>
+        /// <param name="postId"></param>
         /// <param name="comment"></param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpPost("{goodsId}/comment/new")]
-        public ActionResult<string> AddComment(string goodsId, [FromBody]object comment)
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [HttpPost("{postId}/comment/new")]
+        public ActionResult<string> AddComment(string postId, [FromBody]object comment)
         {
-            return Ok();
+            return CreatedAtAction(nameof(AddComment), comment);
         }
 
         /// <summary>
         /// 删除评论
         /// </summary>
-        /// <param name="goodsId"></param>
         /// <param name="commentId"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpDelete("{goodsId}/comment/{commentId}")]
-        public ActionResult<string> DeleteComment(string goodsId, string commentId)
+        [HttpDelete("{postId}/comment/{commentId}")]
+        public ActionResult<string> DeleteComment(string commentId)
         {
             return Ok();
         }

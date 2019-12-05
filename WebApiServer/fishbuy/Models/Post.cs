@@ -3,20 +3,20 @@ using System.Collections.Generic;
 
 namespace fishbuy.Models
 {
-    public partial class Goods
+    public partial class Post
     {
-        public Goods()
+        public Post()
         {
             Comment = new HashSet<Comment>();
-            Media = new HashSet<Media>();
+            MediaLink = new HashSet<MediaLink>();
         }
 
-        public int GoodsId { get; set; }
+        public int PostId { get; set; }
         public int UserId { get; set; }
         public string UpTime { get; set; }
         public string EditTime { get; set; }
         public string Title { get; set; }
-        public string Description { get; set; }
+        public string Content { get; set; }
         public string Tags { get; set; }
         public string Status { get; set; }
         public decimal Price { get; set; }
@@ -24,6 +24,6 @@ namespace fishbuy.Models
 
         public virtual User User { get; set; }
         public virtual ICollection<Comment> Comment { get; set; }
-        public virtual ICollection<Media> Media { get; set; }
+        public virtual ICollection<MediaLink> MediaLink { get; set; }
     }
 }

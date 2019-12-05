@@ -8,7 +8,7 @@ namespace fishbuy.Models
         public User()
         {
             Comment = new HashSet<Comment>();
-            Goods = new HashSet<Goods>();
+            Post = new HashSet<Post>();
         }
 
         public int UserId { get; set; }
@@ -16,11 +16,12 @@ namespace fishbuy.Models
         public string Nickname { get; set; }
         public string Password { get; set; }
         public string Phone { get; set; }
-        public string Birthdate { get; set; }
+        public string BirthDate { get; set; }
         public string Sex { get; set; }
         public string Address { get; set; }
+        public string ImageUrl { get; set; }
 
         public virtual ICollection<Comment> Comment { get; set; }
-        public virtual ICollection<Goods> Goods { get; set; }
+        public virtual ICollection<Post> Post { get; set; }
     }
 }

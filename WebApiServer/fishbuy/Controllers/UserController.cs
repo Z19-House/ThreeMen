@@ -27,15 +27,15 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 根据ID获取用户信息
         /// </summary>
-        /// <param name="userName">用户名或用户ID</param>
+        /// <param name="username">用户名或用户ID</param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpGet("{userName}")]
-        public ActionResult<User> GetUserInfo(string userName)
+        [HttpGet("{username}")]
+        public ActionResult<User> GetUserInfo(string username)
         {
-            _logger.LogInformation(nameof(GetUserInfo) + ": " + userName);
-            var user = _context.User.FirstOrDefault(u => u.UserName == userName || u.UserId.ToString() == userName);
+            _logger.LogInformation(nameof(GetUserInfo) + ": " + username);
+            var user = _context.User.FirstOrDefault(u => u.UserName == username || u.UserId.ToString() == username);
             if (user == null)
             {
                 return NotFound();
@@ -47,16 +47,16 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 用户登录
         /// </summary>
-        /// <param name="userName">用户名或用户ID</param>
+        /// <param name="username">用户名或用户ID</param>
         /// <param name="password">密码</param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("signin")]
-        public ActionResult SignIn(string userName, string password)
+        public ActionResult SignIn(string username, string password)
         {
-            _logger.LogInformation(nameof(SignIn) + ": " + new { userName, password });
-            if (_context.User.FirstOrDefault(u => u.UserName == userName || u.UserId.ToString() == userName)?.Password == password.GetMd5Hash())
+            _logger.LogInformation(nameof(SignIn) + ": " + new { username, password });
+            if (_context.User.FirstOrDefault(u => u.UserName == username || u.UserId.ToString() == username)?.Password == password.GetMd5Hash())
             {
                 return Ok();
             }
@@ -71,8 +71,7 @@ namespace fishbuy.Controllers
         /// </summary>
         /// <param name="user">注册用户信息</param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost("signup")]
         public ActionResult SignUp([FromBody] User user)
         {
@@ -92,7 +91,7 @@ namespace fishbuy.Controllers
                 Nickname = user.Nickname,
                 Password = user.Password.GetMd5Hash(),
                 Phone = user.Phone,
-                Birthdate = user.Birthdate,
+                BirthDate = user.BirthDate,
                 Sex = user.Sex,
                 Address = user.Address,
             });
@@ -103,12 +102,12 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 编辑用户信息
         /// </summary>
+        /// <param name="username"></param>
         /// <param name="user"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPut("{username}")]
-        public ActionResult EditUserInfo([FromBody]object user)
+        public ActionResult EditUserInfo(string username, [FromBody]object user)
         {
             _logger.LogInformation(nameof(EditUserInfo) + ": " + user);
             return Ok();
@@ -122,7 +121,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{username}/goods")]
-        public ActionResult<List<Goods>> GetUserGoods(string username)
+        public ActionResult<List<Post>> GetUserGoods(string username)
         {
             _logger.LogInformation(nameof(GetUserGoods) + ": " + username);
             return Ok();

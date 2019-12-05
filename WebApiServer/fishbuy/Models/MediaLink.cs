@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace fishbuy.Models
 {
-    public partial class Media
+    public partial class MediaLink
     {
         public string MediaId { get; set; }
-        public int GoodsId { get; set; }
+        public int PostId { get; set; }
         public string ResType { get; set; }
         public string ResUri { get; set; }
 
-        public virtual Goods Goods { get; set; }
+        public virtual Post Post { get; set; }
     }
 }

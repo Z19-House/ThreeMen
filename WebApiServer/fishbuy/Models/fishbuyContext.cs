@@ -16,10 +16,9 @@ namespace fishbuy.Models
         }
 
         public virtual DbSet<Comment> Comment { get; set; }
-        public virtual DbSet<Goods> Goods { get; set; }
-        public virtual DbSet<Media> Media { get; set; }
+        public virtual DbSet<MediaLink> MediaLink { get; set; }
+        public virtual DbSet<Post> Post { get; set; }
         public virtual DbSet<User> User { get; set; }
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -29,8 +28,8 @@ namespace fishbuy.Models
             {
                 entity.ToTable("COMMENT", "fishbuy");
 
-                entity.HasIndex(e => e.GoodsId)
-                    .HasName("GOODS_ID");
+                entity.HasIndex(e => e.PostId)
+                    .HasName("POST_ID");
 
                 entity.HasIndex(e => e.UserId)
                     .HasName("USER_ID");
@@ -41,14 +40,14 @@ namespace fishbuy.Models
                     .IsUnicode(false)
                     .ValueGeneratedNever();
 
-                entity.Property(e => e.Comment1)
+                entity.Property(e => e.Content)
                     .IsRequired()
-                    .HasColumnName("COMMENT")
+                    .HasColumnName("CONTENT")
                     .HasMaxLength(256)
                     .IsUnicode(false);
 
-                entity.Property(e => e.GoodsId)
-                    .HasColumnName("GOODS_ID")
+                entity.Property(e => e.PostId)
+                    .HasColumnName("POST_ID")
                     .HasColumnType("int(11)");
 
                 entity.Property(e => e.UpTime)
@@ -61,9 +60,9 @@ namespace fishbuy.Models
                     .HasColumnName("USER_ID")
                     .HasColumnType("int(11)");
 
-                entity.HasOne(d => d.Goods)
+                entity.HasOne(d => d.Post)
                     .WithMany(p => p.Comment)
-                    .HasForeignKey(d => d.GoodsId)
+                    .HasForeignKey(d => d.PostId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("COMMENT_ibfk_1");
 
@@ -74,17 +73,54 @@ namespace fishbuy.Models
                     .HasConstraintName("COMMENT_ibfk_2");
             });
 
-            modelBuilder.Entity<Goods>(entity =>
+            modelBuilder.Entity<MediaLink>(entity =>
             {
-                entity.ToTable("GOODS", "fishbuy");
+                entity.HasKey(e => e.MediaId);
+
+                entity.ToTable("MEDIA_LINK", "fishbuy");
+
+                entity.HasIndex(e => e.PostId)
+                    .HasName("POST_ID");
+
+                entity.Property(e => e.MediaId)
+                    .HasColumnName("MEDIA_ID")
+                    .HasMaxLength(128)
+                    .IsUnicode(false)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.PostId)
+                    .HasColumnName("POST_ID")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.ResType)
+                    .IsRequired()
+                    .HasColumnName("RES_TYPE")
+                    .HasMaxLength(32)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ResUri)
+                    .IsRequired()
+                    .HasColumnName("RES_URI")
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.MediaLink)
+                    .HasForeignKey(d => d.PostId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("MEDIA_LINK_ibfk_1");
+            });
+
+            modelBuilder.Entity<Post>(entity =>
+            {
+                entity.ToTable("POST", "fishbuy");
 
                 entity.HasIndex(e => e.UserId)
                     .HasName("USER_ID");
 
-                entity.Property(e => e.GoodsId)
-                    .HasColumnName("GOODS_ID")
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                entity.Property(e => e.PostId)
+                    .HasColumnName("POST_ID")
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Address)
                     .IsRequired()
@@ -92,9 +128,9 @@ namespace fishbuy.Models
                     .HasMaxLength(128)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Description)
+                entity.Property(e => e.Content)
                     .IsRequired()
-                    .HasColumnName("DESCRIPTION")
+                    .HasColumnName("CONTENT")
                     .HasMaxLength(1000)
                     .IsUnicode(false);
 
@@ -136,46 +172,10 @@ namespace fishbuy.Models
                     .HasColumnType("int(11)");
 
                 entity.HasOne(d => d.User)
-                    .WithMany(p => p.Goods)
+                    .WithMany(p => p.Post)
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("GOODS_ibfk_1");
-            });
-
-            modelBuilder.Entity<Media>(entity =>
-            {
-                entity.ToTable("MEDIA", "fishbuy");
-
-                entity.HasIndex(e => e.GoodsId)
-                    .HasName("GOODS_ID");
-
-                entity.Property(e => e.MediaId)
-                    .HasColumnName("MEDIA_ID")
-                    .HasMaxLength(128)
-                    .IsUnicode(false)
-                    .ValueGeneratedNever();
-
-                entity.Property(e => e.GoodsId)
-                    .HasColumnName("GOODS_ID")
-                    .HasColumnType("int(11)");
-
-                entity.Property(e => e.ResType)
-                    .IsRequired()
-                    .HasColumnName("RES_TYPE")
-                    .HasMaxLength(32)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.ResUri)
-                    .IsRequired()
-                    .HasColumnName("RES_URI")
-                    .HasMaxLength(256)
-                    .IsUnicode(false);
-
-                entity.HasOne(d => d.Goods)
-                    .WithMany(p => p.Media)
-                    .HasForeignKey(d => d.GoodsId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("MEDIA_ibfk_1");
+                    .HasConstraintName("POST_ibfk_1");
             });
 
             modelBuilder.Entity<User>(entity =>
@@ -184,17 +184,21 @@ namespace fishbuy.Models
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("USER_ID")
-                    .HasColumnType("int(11)")
-                    .ValueGeneratedNever();
+                    .HasColumnType("int(11)");
 
                 entity.Property(e => e.Address)
                     .HasColumnName("ADDRESS")
                     .HasMaxLength(128)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Birthdate)
-                    .HasColumnName("BIRTHDATE")
+                entity.Property(e => e.BirthDate)
+                    .HasColumnName("BIRTH_DATE")
                     .HasMaxLength(16)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.ImageUrl)
+                    .HasColumnName("IMAGE_URL")
+                    .HasMaxLength(256)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Nickname)

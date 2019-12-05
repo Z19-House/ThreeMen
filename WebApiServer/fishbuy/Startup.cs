@@ -36,6 +36,7 @@ namespace fishbuy
                 options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
+            services.AddRouting(options => options.LowercaseUrls = true);
 
             // Register the Swagger generator, defining 1 or more Swagger documents
             services.AddSwaggerGen(c =>
