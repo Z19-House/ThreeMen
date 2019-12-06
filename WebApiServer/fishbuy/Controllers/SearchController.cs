@@ -30,7 +30,7 @@ namespace fishbuy.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [HttpGet("goods/{keywords}")]
+        [HttpGet("posts/{keywords}")]
         public ActionResult<List<object>> SearchGoodsByTitle(string keywords)
         {
             return Ok();

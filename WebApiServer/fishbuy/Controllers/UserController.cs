@@ -1,12 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
+using fishbuy.Dtos;
 using fishbuy.Models;
 using fishbuy.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 
 namespace fishbuy.Controllers
 {
@@ -17,11 +24,13 @@ namespace fishbuy.Controllers
     {
         private readonly ILogger<UserController> _logger;
         private readonly FishbuyContext _context;
+        private readonly IConfiguration _config;
 
-        public UserController(ILogger<UserController> logger, FishbuyContext context)
+        public UserController(ILogger<UserController> logger, FishbuyContext context, IConfiguration config)
         {
             _logger = logger;
             _context = context;
+            _config = config;
         }
 
         /// <summary>
@@ -47,18 +56,32 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 用户登录
         /// </summary>
-        /// <param name="username">用户名或用户ID</param>
-        /// <param name="password">密码</param>
+        /// <param name="user">登录用户信息</param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("signin")]
-        public ActionResult SignIn(string username, string password)
+        public ActionResult SignIn([FromBody]UserForLoginDto user)
         {
-            _logger.LogInformation(nameof(SignIn) + ": " + new { username, password });
-            if (_context.User.FirstOrDefault(u => u.UserName == username || u.UserId.ToString() == username)?.Password == password.GetMd5Hash())
+            _logger.LogInformation(nameof(SignIn) + ": " + user);
+            if (_context.User.FirstOrDefault(u => u.UserName == user.Username || u.UserId.ToString() == user.Username)
+                ?.Password == user.Password.GetMd5Hash())
             {
-                return Ok();
+                //generate token
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes(_config.GetSection("AppSettings:Token").Value);
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]{
+                    new Claim(ClaimTypes.NameIdentifier, user.Username)
+                }),
+                    Expires = DateTime.Now.AddDays(1),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha512Signature)
+                };
+
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var tokenString = tokenHandler.WriteToken(token);
+                return Ok(new { tokenString });
             }
             else
             {
@@ -72,8 +95,9 @@ namespace fishbuy.Controllers
         /// <param name="user">注册用户信息</param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [HttpPost("signup")]
-        public ActionResult SignUp([FromBody] User user)
+        public ActionResult SignUp([FromBody]UserForRegisterDto user)
         {
             _logger.LogInformation(nameof(SignUp) + ": " + user);
 
@@ -105,11 +129,15 @@ namespace fishbuy.Controllers
         /// <param name="username"></param>
         /// <param name="user"></param>
         /// <returns></returns>
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPut("{username}")]
-        public ActionResult EditUserInfo(string username, [FromBody]object user)
+        public ActionResult EditUserInfo(string username, [FromBody]UserForRegisterDto user)
         {
             _logger.LogInformation(nameof(EditUserInfo) + ": " + user);
+
+            var user2 = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             return Ok();
         }
 
