@@ -28,21 +28,34 @@ namespace fishbuy
             Configuration = configuration;
         }
 
+        private readonly string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddCors(options =>
+            {
+                options.AddPolicy(MyAllowSpecificOrigins,
+                builder =>
+                {
+                    builder.WithOrigins("http://localhost:8080")
+                           .AllowCredentials()
+                           .AllowAnyHeader();
+                });
+            });
             services.AddResponseCompression();
 
             services.AddDbContext<FishbuyContext>(options =>
                 options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
+
             services.AddRouting(options => options.LowercaseUrls = true);
 
             var key = Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value);
-            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
+            services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+            {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -69,7 +82,7 @@ namespace fishbuy
                     Scheme = "bearer",
                     Type = SecuritySchemeType.Http
                 });
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement 
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
                 {
                     {
                         new OpenApiSecurityScheme
@@ -119,6 +132,8 @@ namespace fishbuy
 
             app.UseAuthentication();
             app.UseAuthorization();
+
+            app.UseCors(MyAllowSpecificOrigins);
 
             app.UseEndpoints(endpoints =>
             {
