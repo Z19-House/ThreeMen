@@ -44,12 +44,12 @@ namespace fishbuy.Controllers
         public ActionResult<User> GetUserInfo(string username)
         {
             _logger.LogInformation(nameof(GetUserInfo) + ": " + username);
-            var user = _context.User.FirstOrDefault(u => u.UserName == username || u.UserId.ToString() == username);
+            var user = _context.User.FirstOrDefault(u => u.Username == username || u.UserId.ToString() == username);
             if (user == null)
             {
                 return NotFound();
             }
-            user.Password = string.Empty;
+            user.PasswordHash = string.Empty;
             return user;
         }
 

@@ -18,6 +18,7 @@ namespace fishbuy.Models
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<MediaLink> MediaLink { get; set; }
         public virtual DbSet<Post> Post { get; set; }
+        public virtual DbSet<RefreshToken> RefreshToken { get; set; }
         public virtual DbSet<User> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -178,6 +179,34 @@ namespace fishbuy.Models
                     .HasConstraintName("POST_ibfk_1");
             });
 
+            modelBuilder.Entity<RefreshToken>(entity =>
+            {
+                entity.HasKey(e => e.Token);
+
+                entity.ToTable("REFRESH_TOKEN", "fishbuy");
+
+                entity.HasIndex(e => e.UserId)
+                    .HasName("USER_ID");
+
+                entity.Property(e => e.Token)
+                    .HasColumnName("TOKEN")
+                    .HasMaxLength(128)
+                    .IsUnicode(false)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.Expires).HasColumnName("EXPIRES");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("USER_ID")
+                    .HasColumnType("int(11)");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.RefreshToken)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("REFRESH_TOKEN_ibfk_1");
+            });
+
             modelBuilder.Entity<User>(entity =>
             {
                 entity.ToTable("USER", "fishbuy");
@@ -207,9 +236,9 @@ namespace fishbuy.Models
                     .HasMaxLength(32)
                     .IsUnicode(false);
 
-                entity.Property(e => e.Password)
+                entity.Property(e => e.PasswordHash)
                     .IsRequired()
-                    .HasColumnName("PASSWORD")
+                    .HasColumnName("PASSWORD_HASH")
                     .HasMaxLength(128)
                     .IsUnicode(false);
 
@@ -223,9 +252,9 @@ namespace fishbuy.Models
                     .HasMaxLength(4)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UserName)
+                entity.Property(e => e.Username)
                     .IsRequired()
-                    .HasColumnName("USER_NAME")
+                    .HasColumnName("USERNAME")
                     .HasMaxLength(16)
                     .IsUnicode(false);
             });

@@ -20,8 +20,8 @@ namespace fishbuy.Repositories
 
         public async Task<User> SignIn(UserForAuthDto user)
         {
-            var loginUser = await _context.User.FirstOrDefaultAsync(u => (u.UserName == user.Username.ToLower() || u.UserId.ToString() == user.Username));
-            if (loginUser == null || !VerifyPassword(user.Password, loginUser.Password))
+            var loginUser = await _context.User.FirstOrDefaultAsync(u => (u.Username == user.Username.ToLower() || u.UserId.ToString() == user.Username));
+            if (loginUser == null || !VerifyPassword(user.Password, loginUser.PasswordHash))
             {
                 return null;
             }
@@ -38,9 +38,9 @@ namespace fishbuy.Repositories
             // 新增用户
             var addedUser = await _context.User.AddAsync(new User
             {
-                UserName = user.Username.ToLower(),
+                Username = user.Username.ToLower(),
                 Nickname = user.Username,
-                Password = user.Password.GetMd5Hash()
+                PasswordHash = user.Password.GetMd5Hash()
             });
             await _context.SaveChangesAsync();
 
@@ -49,7 +49,7 @@ namespace fishbuy.Repositories
 
         public async Task<bool> UserExists(string username)
         {
-            var user = await _context.User.FirstOrDefaultAsync(u => (u.UserName == username.ToLower() || u.UserId.ToString() == username));
+            var user = await _context.User.FirstOrDefaultAsync(u => (u.Username == username.ToLower() || u.UserId.ToString() == username));
             if (user == null)
             {
                 return false;

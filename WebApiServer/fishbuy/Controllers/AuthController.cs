@@ -54,13 +54,13 @@ namespace fishbuy.Controllers
             }
 
             var refreshToken = _service.GenerateRefreshToken();
-            await _repo.SaveRefreshToken(userFromRepo.UserName, refreshToken);
+            await _repo.SaveRefreshToken(userFromRepo.Username, refreshToken);
 
             return new AccessTokenDto
             {
                 AccessToken = _service.GenerateToken(new Claim[] {
                     new Claim(ClaimTypes.NameIdentifier, userFromRepo.UserId.ToString()),
-                    new Claim(ClaimTypes.Name, userFromRepo.UserName)
+                    new Claim(ClaimTypes.Name, userFromRepo.Username)
                 }),
                 Expires = DateTime.UtcNow.AddDays(7).ToString(),
                 RefreshToken = refreshToken
