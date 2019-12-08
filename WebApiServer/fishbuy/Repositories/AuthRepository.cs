@@ -57,24 +57,39 @@ namespace fishbuy.Repositories
             return true;
         }
 
-        public Task<string> GetRefreshToken(string username, string token)
+        public async Task<string> GetRefreshToken(int userId, string token)
         {
-            throw new NotImplementedException();
+            var savedToken = await _context.RefreshToken.FirstOrDefaultAsync(it => it.Token == token && it.User.UserId == userId);
+            if (savedToken == null)
+            {
+                return null;
+            }
+            if (savedToken.Expires < DateTime.UtcNow)
+            {
+                _context.RefreshToken.Remove(savedToken);
+                _context.SaveChanges();
+                return null;
+            }
+            return savedToken.Token;
         }
 
-        public Task<bool> SaveRefreshToken(string username, string token)
+        public async Task<int> SaveRefreshToken(int userId, string token)
         {
-            throw new NotImplementedException();
+            await _context.RefreshToken.AddAsync(new RefreshToken
+            {
+                Token = token,
+                UserId = userId,
+                Expires = DateTime.UtcNow.AddDays(30)
+            });
+            return await _context.SaveChangesAsync();
         }
 
-        public Task<bool> DeleteRefreshToken(string username, string token)
+        public async Task<int> DeleteRefreshToken(int userId, string token)
         {
-            throw new NotImplementedException();
+            var item = await _context.RefreshToken.FirstOrDefaultAsync(it => it.Token == token && it.User.UserId == userId);
+            _context.RefreshToken.Remove(item);
+            return _context.SaveChanges();
         }
 
-        public Task<bool> UpdateRefreshToken(string username, string oldToken, string newToken)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

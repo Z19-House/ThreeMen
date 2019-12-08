@@ -12,9 +12,8 @@ namespace fishbuy.Repositories
         Task<User> Register(UserForAuthDto user);
         Task<User> SignIn(UserForAuthDto user);
         Task<bool> UserExists(string username);
-        Task<string> GetRefreshToken(string username, string token);
-        Task<bool> SaveRefreshToken(string username, string token);
-        Task<bool> DeleteRefreshToken(string username, string token);
-        Task<bool> UpdateRefreshToken(string username, string oldToken, string newToken);
+        Task<string> GetRefreshToken(int userId, string token);
+        Task<int> SaveRefreshToken(int userId, string token);
+        Task<int> DeleteRefreshToken(int userId, string token);
     }
 }

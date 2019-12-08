@@ -54,7 +54,7 @@ namespace fishbuy.Controllers
             }
 
             var refreshToken = _service.GenerateRefreshToken();
-            await _repo.SaveRefreshToken(userFromRepo.Username, refreshToken);
+            await _repo.SaveRefreshToken(userFromRepo.UserId, refreshToken);
 
             return new AccessTokenDto
             {
@@ -90,6 +90,7 @@ namespace fishbuy.Controllers
             {
                 return BadRequest(new { error = "User register fail!" });
             }
+            registeredUser.PasswordHash = null;
             return new CreatedResult(nameof(SignUp), registeredUser);
         }
 
@@ -104,8 +105,12 @@ namespace fishbuy.Controllers
         public async Task<ActionResult<AccessTokenDto>> RefreshToken([FromBody] AccessTokenDto accessTokenDto)
         {
             var principal = _service.GetPrincipalFromExpiredToken(accessTokenDto.AccessToken);
-            var username = principal.Identity.Name;
-            var savedRefreshToken = await _repo.GetRefreshToken(username, accessTokenDto.RefreshToken);
+            var userId = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
+            {
+                return BadRequest(new { error = "Unknow user ID." });
+            }
+            var savedRefreshToken = await _repo.GetRefreshToken(uid, accessTokenDto.RefreshToken);
             if (string.IsNullOrEmpty(savedRefreshToken))
             {
                 return BadRequest(new { error = "Invalid refresh token" });
@@ -113,7 +118,8 @@ namespace fishbuy.Controllers
 
             var newAccessToken = _service.GenerateToken(principal.Claims);
             var newRefreshToken = _service.GenerateRefreshToken();
-            await _repo.UpdateRefreshToken(username, savedRefreshToken, newRefreshToken);
+            await _repo.DeleteRefreshToken(uid, savedRefreshToken);
+            await _repo.SaveRefreshToken(uid, newRefreshToken);
 
             return new AccessTokenDto
             {
