@@ -6,6 +6,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using fishbuy.Models;
+using fishbuy.Repositories;
+using fishbuy.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -50,6 +52,8 @@ namespace fishbuy
                 options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
+            services.AddScoped<IAuthRepository, AuthRepository>();
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
