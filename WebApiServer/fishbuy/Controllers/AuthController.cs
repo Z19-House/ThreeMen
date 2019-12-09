@@ -6,8 +6,8 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
-using fishbuy.Dtos;
 using fishbuy.Models;
+using fishbuy.Data;
 using fishbuy.Repositories;
 using fishbuy.Services;
 using fishbuy.Utils;
@@ -20,6 +20,7 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace fishbuy.Controllers
 {
+    [Produces("application/json")]
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -44,7 +45,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("signin")]
-        public async Task<ActionResult<AccessTokenDto>> SignIn([FromBody] UserForAuthDto user)
+        public async Task<ActionResult<AccessTokenDto>> SignIn([FromBody] UserSmall user)
         {
             _logger.LogInformation(nameof(SignIn) + ": " + user);
             var userFromRepo = await _repo.SignIn(user);
@@ -75,7 +76,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("signup")]
-        public async Task<ActionResult> SignUp([FromBody] UserForAuthDto user)
+        public async Task<ActionResult> SignUp([FromBody] UserSmall user)
         {
             _logger.LogInformation(nameof(SignUp) + ": " + user);
 

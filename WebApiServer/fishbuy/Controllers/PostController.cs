@@ -1,4 +1,6 @@
-﻿using fishbuy.Models;
+﻿using fishbuy.Data;
+using fishbuy.Models;
+using fishbuy.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -31,12 +33,12 @@ namespace fishbuy.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
-        public ActionResult<List<Post>> GetAllPosts(int skip = 0, int take = 20)
+        public ActionResult<List<PostMedium>> GetAllPosts(int skip = 0, int take = 20)
         {
-            var list = new List<Post>();
+            var list = new List<PostMedium>();
             for (int i = 1; i <= take; i++)
             {
-                list.Add(new Post
+                list.Add(PostMedium.FromPost(new Post
                 {
                     UserId = _context.User.FirstOrDefault()?.UserId ?? 1,
                     PostId = skip + i,
@@ -55,40 +57,25 @@ namespace fishbuy.Controllers
                             PostId=skip + i,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
-                            ResUri="https://i.loli.net/2019/12/05/3BQpGcF2Cg9NAaT.png"
+                            ResUri="IMG_7169_s.JPG"
                         },
                         new MediaLink
                         {
                             PostId=skip + i,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
-                            ResUri="https://i.loli.net/2019/12/05/SXp9wcBiHqrCODu.png"
+                            ResUri="78171602_氷の妖精.png"
                         },
                         new MediaLink
                         {
                             PostId=skip + i,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
-                            ResUri=$"{_config.GetSection("Server:Images").Value}IMG_7169_s.JPG"
-                        },
-                        new MediaLink
-                        {
-                            PostId=skip + i,
-                            MediaId=Guid.NewGuid().ToString(),
-                            ResType="image",
-                            ResUri=$"{_config.GetSection("Server:Images").Value}78171602_氷の妖精.png"
-                        },                        
-                        new MediaLink
-                        {
-                            PostId=skip + i,
-                            MediaId=Guid.NewGuid().ToString(),
-                            ResType="image",
-                            ResUri=$"{_config.GetSection("Server:Images").Value}QQ图片20191206203646.gif"
+                            ResUri="QQ图片20191206203646.gif"
                         },
                     },
                     User = _context.User.FirstOrDefault(),
-                });
-
+                }, _config.GetSection("Server:Images").Value));
             }
             return list;
         }
@@ -101,9 +88,9 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("{postId}")]
-        public ActionResult<Post> GetPost(int postId)
+        public ActionResult<PostLarge> GetPost(int postId)
         {
-            return new Post
+            return PostLarge.FromPost(new Post
             {
                 UserId = 1,
                 PostId = postId,
@@ -137,21 +124,21 @@ namespace fishbuy.Controllers
                             PostId=postId,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
-                            ResUri=$"{_config.GetSection("Server:Images").Value}IMG_7169_s.JPG"
+                            ResUri="IMG_7169_s.JPG"
                         },
                         new MediaLink
                         {
                             PostId=postId,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
-                            ResUri=$"{_config.GetSection("Server:Images").Value}78171602_氷の妖精.png"
+                            ResUri="78171602_氷の妖精.png"
                         },
                         new MediaLink
                         {
                             PostId=postId,
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
-                            ResUri=$"{_config.GetSection("Server:Images").Value}QQ图片20191206203646.gif"
+                            ResUri="QQ图片20191206203646.gif"
                         },
                     },
                 Comment = new List<Comment>()
@@ -162,7 +149,8 @@ namespace fishbuy.Controllers
                         UserId=_context.User.FirstOrDefault()?.UserId ?? 1,
                         CommentId=Guid.NewGuid().ToString(),
                         UpTime=DateTime.Now.AddHours(-1).ToString("yyyy/MM/dd"),
-                        Content="第1个评论"
+                        Content="第1个评论",
+                        User=_context.User.FirstOrDefault()
                     },
                     new Comment
                     {
@@ -170,10 +158,11 @@ namespace fishbuy.Controllers
                         UserId=_context.User.FirstOrDefault()?.UserId ?? 1,
                         CommentId=Guid.NewGuid().ToString(),
                         UpTime=DateTime.Now.AddHours(-1).ToString("yyyy/MM/dd"),
-                        Content="第2个评论"
+                        Content="第2个评论",
+                        User=_context.User.FirstOrDefault()
                     }
                 }
-            };
+            }, _config.GetSection("Server:Images").Value);
         }
 
         /// <summary>

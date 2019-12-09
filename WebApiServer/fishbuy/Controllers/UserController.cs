@@ -5,8 +5,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using fishbuy.Dtos;
 using fishbuy.Models;
+using fishbuy.Data;
 using fishbuy.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -41,7 +41,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{username}")]
-        public ActionResult<User> GetUserInfo(string username)
+        public ActionResult<UserLarge> GetUserInfo(string username)
         {
             _logger.LogInformation(nameof(GetUserInfo) + ": " + username);
             var user = _context.User.FirstOrDefault(u => u.Username == username || u.UserId.ToString() == username);
@@ -49,12 +49,7 @@ namespace fishbuy.Controllers
             {
                 return NotFound();
             }
-            user.PasswordHash = string.Empty;
-            if (!string.IsNullOrEmpty(user.ImageUrl))
-            {
-                user.ImageUrl = $"{_config.GetSection("Server:Images").Value}{user.ImageUrl}";
-            }
-            return user;
+            return UserLarge.FromUser(user, _config.GetSection("Server:Images").Value);
         }
 
         /// <summary>
@@ -66,7 +61,7 @@ namespace fishbuy.Controllers
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpPut("{username}")]
-        public ActionResult EditUserInfo(string username, [FromBody]UserForEditDto user)
+        public ActionResult EditUserInfo(string username, [FromBody]UserLarge user)
         {
             _logger.LogInformation(nameof(EditUserInfo) + ": " + user);
 
@@ -83,7 +78,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{username}/posts")]
-        public ActionResult<List<Post>> GetUserGoods(string username)
+        public ActionResult<List<PostMedium>> GetUserGoods(string username)
         {
             _logger.LogInformation(nameof(GetUserGoods) + ": " + username);
             return Ok();

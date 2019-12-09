@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace fishbuy.Models
+namespace fishbuy.Data
 {
     public partial class User
     {

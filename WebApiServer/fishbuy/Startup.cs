@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
-using fishbuy.Models;
+using fishbuy.Data;
 using fishbuy.Repositories;
 using fishbuy.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -46,7 +46,6 @@ namespace fishbuy
                            .AllowAnyHeader();
                 });
             });
-            services.AddResponseCompression();
 
             services.AddDbContext<FishbuyContext>(options =>
                 options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
@@ -112,8 +111,6 @@ namespace fishbuy
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseResponseCompression();
-
             // Enable middleware to serve generated Swagger as a JSON endpoint.
             app.UseSwagger();
 

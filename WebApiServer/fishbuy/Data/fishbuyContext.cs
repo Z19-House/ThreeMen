@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace fishbuy.Models
+namespace fishbuy.Data
 {
     public partial class FishbuyContext : DbContext
     {

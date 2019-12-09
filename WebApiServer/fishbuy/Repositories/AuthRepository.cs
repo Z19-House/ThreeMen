@@ -1,5 +1,5 @@
-﻿using fishbuy.Dtos;
-using fishbuy.Models;
+﻿using fishbuy.Models;
+using fishbuy.Data;
 using fishbuy.Utils;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -18,7 +18,7 @@ namespace fishbuy.Repositories
             _context = context;
         }
 
-        public async Task<User> SignIn(UserForAuthDto user)
+        public async Task<User> SignIn(UserSmall user)
         {
             var loginUser = await _context.User.FirstOrDefaultAsync(u => (u.Username == user.Username.ToLower() || u.UserId.ToString() == user.Username));
             if (loginUser == null || !VerifyPassword(user.Password, loginUser.PasswordHash))
@@ -33,7 +33,7 @@ namespace fishbuy.Repositories
             return password.GetMd5Hash() == passwordHash;
         }
 
-        public async Task<User> Register(UserForAuthDto user)
+        public async Task<User> Register(UserSmall user)
         {
             // 新增用户
             var addedUser = await _context.User.AddAsync(new User
