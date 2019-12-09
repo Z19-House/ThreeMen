@@ -50,6 +50,10 @@ namespace fishbuy.Controllers
                 return NotFound();
             }
             user.PasswordHash = string.Empty;
+            if (!string.IsNullOrEmpty(user.ImageUrl))
+            {
+                user.ImageUrl = $"{_config.GetSection("Server:Images").Value}{user.ImageUrl}";
+            }
             return user;
         }
 

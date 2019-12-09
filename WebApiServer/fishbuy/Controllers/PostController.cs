@@ -1,6 +1,7 @@
 ﻿using fishbuy.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -15,11 +16,13 @@ namespace fishbuy.Controllers
     {
         private readonly ILogger<PostController> _logger;
         private readonly FishbuyContext _context;
+        private readonly IConfiguration _config;
 
-        public PostController(ILogger<PostController> logger, FishbuyContext context)
+        public PostController(ILogger<PostController> logger, FishbuyContext context, IConfiguration config)
         {
             _logger = logger;
             _context = context;
+            _config = config;
         }
 
         /// <summary>
@@ -60,7 +63,28 @@ namespace fishbuy.Controllers
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
                             ResUri="https://i.loli.net/2019/12/05/SXp9wcBiHqrCODu.png"
-                        }
+                        },
+                        new MediaLink
+                        {
+                            PostId=skip + i,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri=$"{_config.GetSection("Server:Images").Value}IMG_7169_s.JPG"
+                        },
+                        new MediaLink
+                        {
+                            PostId=skip + i,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri=$"{_config.GetSection("Server:Images").Value}78171602_氷の妖精.png"
+                        },                        
+                        new MediaLink
+                        {
+                            PostId=skip + i,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri=$"{_config.GetSection("Server:Images").Value}QQ图片20191206203646.gif"
+                        },
                     },
                     User = _context.User.FirstOrDefault(),
                 });
@@ -107,7 +131,28 @@ namespace fishbuy.Controllers
                             MediaId=Guid.NewGuid().ToString(),
                             ResType="image",
                             ResUri="https://i.loli.net/2019/12/05/SXp9wcBiHqrCODu.png"
-                        }
+                        },
+                        new MediaLink
+                        {
+                            PostId=postId,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri=$"{_config.GetSection("Server:Images").Value}IMG_7169_s.JPG"
+                        },
+                        new MediaLink
+                        {
+                            PostId=postId,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri=$"{_config.GetSection("Server:Images").Value}78171602_氷の妖精.png"
+                        },
+                        new MediaLink
+                        {
+                            PostId=postId,
+                            MediaId=Guid.NewGuid().ToString(),
+                            ResType="image",
+                            ResUri=$"{_config.GetSection("Server:Images").Value}QQ图片20191206203646.gif"
+                        },
                     },
                 Comment = new List<Comment>()
                 {
