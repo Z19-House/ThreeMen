@@ -60,6 +60,7 @@ namespace fishbuy.Controllers
         /// <returns></returns>
         [Authorize]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPut("{username}")]
         public ActionResult EditUserInfo(string username, [FromBody]UserLarge user)
         {
