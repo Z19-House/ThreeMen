@@ -15,15 +15,54 @@ namespace fishbuy.Data
         {
         }
 
+        public virtual DbSet<Collection> Collection { get; set; }
         public virtual DbSet<Comment> Comment { get; set; }
         public virtual DbSet<MediaLink> MediaLink { get; set; }
         public virtual DbSet<Post> Post { get; set; }
         public virtual DbSet<RefreshToken> RefreshToken { get; set; }
+        public virtual DbSet<UploadedImage> UploadedImage { get; set; }
         public virtual DbSet<User> User { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+
+            modelBuilder.Entity<Collection>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.PostId });
+
+                entity.ToTable("COLLECTION", "fishbuy");
+
+                entity.HasIndex(e => e.PostId)
+                    .HasName("POST_ID");
+
+                entity.Property(e => e.UserId)
+                    .HasColumnName("USER_ID")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.PostId)
+                    .HasColumnName("POST_ID")
+                    .HasColumnType("int(11)");
+
+                entity.Property(e => e.CollectionTime).HasColumnName("COLLECTION_TIME");
+
+                entity.Property(e => e.Privacy)
+                    .HasColumnName("PRIVACY")
+                    .HasColumnType("int(11)")
+                    .HasDefaultValueSql("0");
+
+                entity.HasOne(d => d.Post)
+                    .WithMany(p => p.Collection)
+                    .HasForeignKey(d => d.PostId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("COLLECTION_ibfk_2");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Collection)
+                    .HasForeignKey(d => d.UserId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("COLLECTION_ibfk_1");
+            });
 
             modelBuilder.Entity<Comment>(entity =>
             {
@@ -205,6 +244,27 @@ namespace fishbuy.Data
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("REFRESH_TOKEN_ibfk_1");
+            });
+
+            modelBuilder.Entity<UploadedImage>(entity =>
+            {
+                entity.HasKey(e => e.Hash);
+
+                entity.ToTable("UPLOADED_IMAGE", "fishbuy");
+
+                entity.Property(e => e.Hash)
+                    .HasColumnName("HASH")
+                    .HasMaxLength(128)
+                    .IsUnicode(false)
+                    .ValueGeneratedNever();
+
+                entity.Property(e => e.FileName)
+                    .IsRequired()
+                    .HasColumnName("FILE_NAME")
+                    .HasMaxLength(256)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.UploadTime).HasColumnName("UPLOAD_TIME");
             });
 
             modelBuilder.Entity<User>(entity =>

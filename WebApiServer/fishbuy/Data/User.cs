@@ -7,6 +7,7 @@ namespace fishbuy.Data
     {
         public User()
         {
+            Collection = new HashSet<Collection>();
             Comment = new HashSet<Comment>();
             Post = new HashSet<Post>();
             RefreshToken = new HashSet<RefreshToken>();
@@ -22,6 +23,7 @@ namespace fishbuy.Data
         public string Address { get; set; }
         public string ImageUrl { get; set; }
 
+        public virtual ICollection<Collection> Collection { get; set; }
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual ICollection<Post> Post { get; set; }
         public virtual ICollection<RefreshToken> RefreshToken { get; set; }

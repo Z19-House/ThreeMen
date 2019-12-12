@@ -84,5 +84,22 @@ namespace fishbuy.Controllers
             _logger.LogInformation(nameof(GetUserGoods) + ": " + username);
             return Ok();
         }
+
+        /// <summary>
+        /// 获取用户收藏
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("{username}/collection")]
+        public ActionResult<List<PostMedium>> GetUserColection(string username)
+        {
+            _logger.LogInformation(nameof(GetUserColection) + ": " + username);
+
+            //Todo:判断查询的用户与登录的用户是否相同，相同则显示私有收藏
+
+            return Ok();
+        }
     }
 }

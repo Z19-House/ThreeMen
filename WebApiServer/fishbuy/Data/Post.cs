@@ -7,6 +7,7 @@ namespace fishbuy.Data
     {
         public Post()
         {
+            Collection = new HashSet<Collection>();
             Comment = new HashSet<Comment>();
             MediaLink = new HashSet<MediaLink>();
         }
@@ -23,6 +24,7 @@ namespace fishbuy.Data
         public string Address { get; set; }
 
         public virtual User User { get; set; }
+        public virtual ICollection<Collection> Collection { get; set; }
         public virtual ICollection<Comment> Comment { get; set; }
         public virtual ICollection<MediaLink> MediaLink { get; set; }
     }

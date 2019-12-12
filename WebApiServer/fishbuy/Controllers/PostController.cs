@@ -1,6 +1,7 @@
 ﻿using fishbuy.Data;
 using fishbuy.Models;
 using fishbuy.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -170,6 +171,7 @@ namespace fishbuy.Controllers
         /// </summary>
         /// <param name="post"></param>
         /// <returns></returns>
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost("new")]
         public ActionResult<string> PostNew([FromBody]object post)
@@ -195,6 +197,7 @@ namespace fishbuy.Controllers
         /// </summary>
         /// <param name="postId"></param>
         /// <returns></returns>
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpDelete("{postId}")]
@@ -209,6 +212,7 @@ namespace fishbuy.Controllers
         /// <param name="postId"></param>
         /// <param name="comment"></param>
         /// <returns></returns>
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost("{postId}/comment/new")]
         public ActionResult<string> AddComment(string postId, [FromBody]object comment)
@@ -221,6 +225,7 @@ namespace fishbuy.Controllers
         /// </summary>
         /// <param name="commentId"></param>
         /// <returns></returns>
+        [Authorize]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpDelete("{postId}/comment/{commentId}")]
