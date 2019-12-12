@@ -81,11 +81,17 @@ export default {
             .then((response)=> {
                 localStorage.setItem("accessToken", response.data.accessToken);
                 localStorage.setItem("refreshToken", response.data.refreshToken);
-                this.$router.push({ path : '/home'});
+                localStorage.setItem("username", formName.username);
+                this.$router.push({ path : '/'});
             })
             .catch((error)=> {
                 console.log(error);
                 this.$message.error('用户名或密码错误');
+                if(localStorage.getItem("username")!=null){
+                    localStorage.removeItem("accessToken");
+                    localStorage.removeItem("refreshToken");
+                    localStorage.removeItem("username");
+                }
 
             });
         }

@@ -24,6 +24,7 @@ export default {
   components:{
     loginHead:loginHead,
     loginWindow:loginWindow
+    
   }
   
 }

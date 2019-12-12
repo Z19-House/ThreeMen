@@ -10,7 +10,7 @@
             </el-col>
             <el-col :span="14">
                 <div id="searchBarDiv">
-                    <el-input placeholder="请输入内容" v-model="seachVaule" style="margin-top:8%;width:60%;" >
+                    <el-input placeholder="请输入内容" v-model="seachVaule" style="margin-top:4%;width:60%;" >
                         <el-button 
                             type="primary"
                             slot="append"
