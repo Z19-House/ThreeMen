@@ -43,6 +43,10 @@ namespace fishbuy.Models
 
         public static UserMedium FromUser(User user, string imageServer)
         {
+            if (user == null)
+            {
+                return null;
+            }
             return new UserMedium
             {
                 UserId = user.UserId,

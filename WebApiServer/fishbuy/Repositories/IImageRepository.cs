@@ -9,8 +9,8 @@ namespace fishbuy.Repositories
     public interface IImageRepository
     {
         Task<UploadedImage> GetImage(string imageHash);
-        Task<int> SaveImage(string imageHash, string fileName, DateTime dateTime);
-        Task<int> DeleteImage(string imageHash);
+        Task<UploadedImage> SaveImage(string imageHash, string fileName, DateTime dateTime);
+        Task<UploadedImage> DeleteImage(string imageHash);
         Task<bool> ImageExists(string imageHash);
     }
 }

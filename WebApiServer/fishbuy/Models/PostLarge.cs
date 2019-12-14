@@ -16,12 +16,12 @@ namespace fishbuy.Models
         /// <summary>
         /// 首次发布时间
         /// </summary>
-        public string UpTime { get; set; }
+        public DateTime UpTime { get; set; }
 
         /// <summary>
         /// 最后编辑时间
         /// </summary>
-        public string EditTime { get; set; }
+        public DateTime EditTime { get; set; }
 
         /// <summary>
         /// 标题
@@ -66,7 +66,7 @@ namespace fishbuy.Models
         /// <summary>
         /// 媒体资源，类型及链接
         /// </summary>
-        public List<Media> Medias { get; set; }
+        public List<MediaSmall> Medias { get; set; }
 
         public static PostLarge FromPost(Post post, string imageServer)
         {
@@ -75,10 +75,10 @@ namespace fishbuy.Models
             {
                 cms.Add(CommentLarge.FromComment(cm, imageServer));
             }
-            var mds = new List<Media>();
+            var mds = new List<MediaSmall>();
             foreach (var md in post.MediaLink)
             {
-                mds.Add(Media.FromMediaLink(md, imageServer));
+                mds.Add(MediaSmall.FromMediaLink(md, imageServer));
             }
             return new PostLarge
             {

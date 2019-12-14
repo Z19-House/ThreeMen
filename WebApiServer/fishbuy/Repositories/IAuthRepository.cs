@@ -13,7 +13,7 @@ namespace fishbuy.Repositories
         Task<User> SignIn(UserSmall user);
         Task<bool> UserExists(string username);
         Task<string> GetRefreshToken(int userId, string token);
-        Task<int> SaveRefreshToken(int userId, string token);
-        Task<int> DeleteRefreshToken(int userId, string token);
+        Task<string> SaveRefreshToken(int userId, string token);
+        Task<string> DeleteRefreshToken(int userId, string token);
     }
 }

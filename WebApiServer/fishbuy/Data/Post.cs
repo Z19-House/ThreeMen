@@ -14,8 +14,8 @@ namespace fishbuy.Data
 
         public int PostId { get; set; }
         public int UserId { get; set; }
-        public string UpTime { get; set; }
-        public string EditTime { get; set; }
+        public DateTime UpTime { get; set; }
+        public DateTime EditTime { get; set; }
         public string Title { get; set; }
         public string Content { get; set; }
         public string Tags { get; set; }

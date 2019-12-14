@@ -14,11 +14,12 @@ namespace fishbuy.Repositories
             _context = context;
         }
 
-        public async Task<int> DeleteImage(string imageHash)
+        public async Task<UploadedImage> DeleteImage(string imageHash)
         {
             var image = await GetImage(imageHash);
             _context.UploadedImage.Remove(image);
-            return _context.SaveChanges();
+            _context.SaveChanges();
+            return image;
         }
 
         public async Task<UploadedImage> GetImage(string imageHash)
@@ -36,15 +37,15 @@ namespace fishbuy.Repositories
             return true;
         }
 
-        public async Task<int> SaveImage(string imageHash, string fileName, DateTime dateTime)
+        public async Task<UploadedImage> SaveImage(string imageHash, string fileName, DateTime dateTime)
         {
-            await _context.UploadedImage.AddAsync(new UploadedImage
+            var image = await _context.UploadedImage.AddAsync(new UploadedImage
             {
                 Hash = imageHash,
                 FileName = fileName,
                 UploadTime = dateTime
             });
-            return await _context.SaveChangesAsync();
+            return image.Entity;
         }
     }
 }

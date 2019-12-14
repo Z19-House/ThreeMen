@@ -7,7 +7,7 @@ namespace fishbuy.Data
     {
         public string CommentId { get; set; }
         public int PostId { get; set; }
-        public string UpTime { get; set; }
+        public DateTime UpTime { get; set; }
         public string Content { get; set; }
         public int UserId { get; set; }
 

@@ -73,22 +73,24 @@ namespace fishbuy.Repositories
             return savedToken.Token;
         }
 
-        public async Task<int> SaveRefreshToken(int userId, string token)
+        public async Task<string> SaveRefreshToken(int userId, string token)
         {
-            await _context.RefreshToken.AddAsync(new RefreshToken
+            var item = await _context.RefreshToken.AddAsync(new RefreshToken
             {
                 Token = token,
                 UserId = userId,
                 Expires = DateTime.UtcNow.AddDays(30)
             });
-            return await _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
+            return item.Entity.Token;
         }
 
-        public async Task<int> DeleteRefreshToken(int userId, string token)
+        public async Task<string> DeleteRefreshToken(int userId, string token)
         {
             var item = await _context.RefreshToken.FirstOrDefaultAsync(it => it.Token == token && it.User.UserId == userId);
             _context.RefreshToken.Remove(item);
-            return _context.SaveChanges();
+            _context.SaveChanges();
+            return item.Token;
         }
 
     }

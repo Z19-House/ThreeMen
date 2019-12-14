@@ -17,5 +17,14 @@ namespace fishbuy.Utils
             }
             return url;
         }
+
+        public static string RemoveServerAddress(this string url, string imageServer)
+        {
+            if (!url.IsNullOrEmpty() && url.StartsWith(imageServer))
+            {
+                return url.TrimStart(imageServer.ToCharArray());
+            }
+            return url;
+        }
     }
 }

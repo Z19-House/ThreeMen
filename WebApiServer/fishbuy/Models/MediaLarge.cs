@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace fishbuy.Models
 {
-    public class Media
+    public class MediaLarge
     {
         /// <summary>
         /// 资源 Hash
@@ -18,7 +18,7 @@ namespace fishbuy.Models
         /// <summary>
         /// 资源类型
         /// </summary>
-        public string ResType { get; set; }
+        public ResType ResType { get; set; }
 
         /// <summary>
         /// 资源链接
@@ -30,22 +30,13 @@ namespace fishbuy.Models
         /// </summary>
         public DateTime UploadTime { get; set; }
 
-        public static Media FromMediaLink(MediaLink mediaLink, string imageServer)
+        public static MediaLarge FromUploadedImage(UploadedImage uploadedImage)
         {
-            return new Media
-            {
-                ResType = mediaLink.ResType,
-                ResUri = mediaLink.ResUri.AddServerAddress(imageServer)
-            };
-        }
-
-        public static Media FromUploadedImage(UploadedImage uploadedImage)
-        {
-            return new Media
+            return new MediaLarge
             {
                 Hash = uploadedImage.Hash,
                 ResUri = uploadedImage.FileName,
-                ResType = Models.ResType.Image.ToString(),
+                ResType = ResType.Image,
                 UploadTime = uploadedImage.UploadTime
             };
         }

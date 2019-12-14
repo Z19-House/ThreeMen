@@ -16,7 +16,7 @@ namespace fishbuy.Models
         /// <summary>
         /// 评论时间
         /// </summary>
-        public string UpTime { get; set; }
+        public DateTime UpTime { get; set; }
 
         /// <summary>
         /// 评论内容

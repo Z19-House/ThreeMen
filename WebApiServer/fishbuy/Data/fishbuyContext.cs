@@ -90,11 +90,7 @@ namespace fishbuy.Data
                     .HasColumnName("POST_ID")
                     .HasColumnType("int(11)");
 
-                entity.Property(e => e.UpTime)
-                    .IsRequired()
-                    .HasColumnName("UP_TIME")
-                    .HasMaxLength(32)
-                    .IsUnicode(false);
+                entity.Property(e => e.UpTime).HasColumnName("UP_TIME");
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("USER_ID")
@@ -174,11 +170,7 @@ namespace fishbuy.Data
                     .HasMaxLength(1000)
                     .IsUnicode(false);
 
-                entity.Property(e => e.EditTime)
-                    .IsRequired()
-                    .HasColumnName("EDIT_TIME")
-                    .HasMaxLength(32)
-                    .IsUnicode(false);
+                entity.Property(e => e.EditTime).HasColumnName("EDIT_TIME");
 
                 entity.Property(e => e.Price)
                     .HasColumnName("PRICE")
@@ -201,11 +193,7 @@ namespace fishbuy.Data
                     .HasMaxLength(32)
                     .IsUnicode(false);
 
-                entity.Property(e => e.UpTime)
-                    .IsRequired()
-                    .HasColumnName("UP_TIME")
-                    .HasMaxLength(32)
-                    .IsUnicode(false);
+                entity.Property(e => e.UpTime).HasColumnName("UP_TIME");
 
                 entity.Property(e => e.UserId)
                     .HasColumnName("USER_ID")

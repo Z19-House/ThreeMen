@@ -74,7 +74,7 @@ namespace fishbuy.Models
                 Status = post.Status,
                 Address = post.Address,
                 Tags = post.Tags,
-                ImageUrl = post.MediaLink.FirstOrDefault(it => it.ResType == "image")?.ResUri.AddServerAddress(imageServer)
+                ImageUrl = post.MediaLink.FirstOrDefault(it => it.ResType == ResType.Image.ToString())?.ResUri.AddServerAddress(imageServer)
             };
         }
     }

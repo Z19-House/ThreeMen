@@ -40,7 +40,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("upload")]
-        public async Task<ActionResult<Media>> UploadImage(IFormFile formFile)
+        public async Task<ActionResult<MediaLarge>> UploadImage(IFormFile formFile)
         {
             if (!LimitedImageTypes.Contains(Path.GetExtension(formFile.FileName).ToLower()))
             {
@@ -67,7 +67,7 @@ namespace fishbuy.Controllers
                 await _repo.SaveImage(md5HashString, fileName, DateTime.UtcNow);
             }
 
-            return Media.FromUploadedImage(await _repo.GetImage(md5HashString));
+            return MediaLarge.FromUploadedImage(await _repo.GetImage(md5HashString));
         }
 
         /// <summary>
