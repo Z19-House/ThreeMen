@@ -6,6 +6,8 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using fishbuy.Models;
+using fishbuy.Repositories;
+using fishbuy.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -19,11 +21,13 @@ namespace fishbuy.Controllers
     [ApiController]
     public class ImageController : ControllerBase
     {
+        private readonly IImageRepository _repo;
         private readonly string[] LimitedImageTypes = { ".jpg", ".jpeg", ".gif", ".png", ".bmp" };
         private readonly string ImageFolderPath;
 
-        public ImageController(IConfiguration config)
+        public ImageController(IImageRepository repo, IConfiguration config)
         {
+            _repo = repo;
             ImageFolderPath = config.GetSection("AppSettings:ImageFolder").Value;
         }
 
@@ -47,38 +51,23 @@ namespace fishbuy.Controllers
                 return BadRequest(new { error = "File larger then 2MB." });
             }
 
-            // Todo: 使用哈希值检测文件是否已存在
-            string md5HashString;
+            // 计算文件哈希值
+            string md5HashString = formFile.OpenReadStream().GetMd5Hash();
 
-            using (var stream = new FileStream(Path.Combine(ImageFolderPath, formFile.FileName), FileMode.Create))
+            // 使用哈希值检测文件是否已存在，若文件不存在则保存
+            if (!await _repo.ImageExists(md5HashString))
             {
-                await formFile.CopyToAsync(stream);
-                using (MD5 md5Hash = MD5.Create())
+                string fileName = $"{md5HashString}{Path.GetExtension(formFile.FileName)}";
+
+                using (var stream = new FileStream(Path.Combine(ImageFolderPath, fileName), FileMode.Create))
                 {
-                    // Convert the input string to a byte array and compute the hash.
-                    byte[] data = md5Hash.ComputeHash(stream);
-
-                    // Create a new Stringbuilder to collect the bytes
-                    // and create a string.
-                    StringBuilder sBuilder = new StringBuilder();
-
-                    // Loop through each byte of the hashed data 
-                    // and format each one as a hexadecimal string.
-                    for (int i = 0; i < data.Length; i++)
-                    {
-                        sBuilder.Append(data[i].ToString("x2"));
-                    }
-                    md5HashString = sBuilder.ToString();
+                    await formFile.CopyToAsync(stream);
                 }
+
+                await _repo.SaveImage(md5HashString, fileName, DateTime.UtcNow);
             }
 
-            return new Media
-            {
-                Hash = md5HashString,
-                ResType = ResType.Image.ToString(),
-                ResUri = formFile.FileName,
-                UploadTime = DateTime.UtcNow
-            };
+            return Media.FromUploadedImage(await _repo.GetImage(md5HashString));
         }
 
         /// <summary>
@@ -92,6 +81,21 @@ namespace fishbuy.Controllers
         [HttpDelete("{imageHash}")]
         public async Task<ActionResult> DeleteImage(string imageHash)
         {
+            // 若文件存在则删除
+            if (await _repo.ImageExists(imageHash))
+            {
+                var image = await _repo.GetImage(imageHash);
+                if (System.IO.File.Exists(Path.Combine(ImageFolderPath, image.FileName)))
+                {
+                    System.IO.File.Delete(Path.Combine(ImageFolderPath, image.FileName));
+                }
+                await _repo.DeleteImage(imageHash);
+            }
+            else
+            {
+                return NotFound();
+            }
+
             return Ok();
         }
     }

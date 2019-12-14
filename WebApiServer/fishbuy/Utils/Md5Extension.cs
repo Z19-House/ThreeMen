@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -29,26 +30,39 @@ namespace fishbuy.Utils
             }
         }
 
-        // Verify a hash against a string.
-        public static bool VerifyMd5Hash(this string input, string hash)
+        public static string GetMd5Hash(this Stream input)
         {
             using (MD5 md5Hash = MD5.Create())
             {
-                // Hash the input.
-                string hashOfInput = input.GetMd5Hash();
+                // Convert the input string to a byte array and compute the hash.
+                byte[] data = md5Hash.ComputeHash(input);
 
-                // Create a StringComparer an compare the hashes.
-                StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+                // Create a new Stringbuilder to collect the bytes
+                // and create a string.
+                StringBuilder sBuilder = new StringBuilder();
 
-                if (0 == comparer.Compare(hashOfInput, hash))
+                // Loop through each byte of the hashed data 
+                // and format each one as a hexadecimal string.
+                for (int i = 0; i < data.Length; i++)
                 {
-                    return true;
+                    sBuilder.Append(data[i].ToString("x2"));
                 }
-                else
-                {
-                    return false;
-                }
+
+                // Return the hexadecimal string.
+                return sBuilder.ToString();
             }
+        }
+
+        // Verify a hash against a string.
+        public static bool VerifyMd5Hash(this string input, string hash)
+        {
+            // Hash the input.
+            string hashOfInput = input.GetMd5Hash();
+
+            // Create a StringComparer an compare the hashes.
+            StringComparer comparer = StringComparer.OrdinalIgnoreCase;
+
+            return 0 == comparer.Compare(hashOfInput, hash);
         }
     }
 }

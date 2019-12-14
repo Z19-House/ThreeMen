@@ -53,6 +53,7 @@ namespace fishbuy
             services.AddControllers();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IImageRepository, ImageRepository>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
 

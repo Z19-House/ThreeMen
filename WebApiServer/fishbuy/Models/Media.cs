@@ -38,5 +38,16 @@ namespace fishbuy.Models
                 ResUri = mediaLink.ResUri.AddServerAddress(imageServer)
             };
         }
+
+        public static Media FromUploadedImage(UploadedImage uploadedImage)
+        {
+            return new Media
+            {
+                Hash = uploadedImage.Hash,
+                ResUri = uploadedImage.FileName,
+                ResType = Models.ResType.Image.ToString(),
+                UploadTime = uploadedImage.UploadTime
+            };
+        }
     }
 }
