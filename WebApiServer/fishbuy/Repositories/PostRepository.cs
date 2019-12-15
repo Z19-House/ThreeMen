@@ -6,6 +6,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace fishbuy.Repositories
@@ -60,9 +61,9 @@ namespace fishbuy.Repositories
             return post;
         }
 
-        public async Task<int> GetPostCount()
+        public async Task<int> GetPostCount(Expression<Func<Post, bool>> predicate)
         {
-            return await _context.Post.CountAsync();
+            return await _context.Post.CountAsync(predicate);
         }
 
         public async Task<Post> SavePost(PostForUpload post)

@@ -39,7 +39,7 @@ namespace fishbuy.Controllers
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
-        public async Task<ActionResult<List<PostMedium>>> GetAllPosts(DateTime beforeDateTime, int skip = 0, int take = 20)
+        public async Task<ActionResult<ListResult<List<PostMedium>>>> GetAllPosts(DateTime beforeDateTime, int skip = 0, int take = 20)
         {
             var posts = await _repo.GetPosts(beforeDateTime, skip, take);
             var list = new List<PostMedium>();
@@ -47,7 +47,11 @@ namespace fishbuy.Controllers
             {
                 list.Add(PostMedium.FromPost(item, _imageServer));
             }
-            return list;
+            return new ListResult<List<PostMedium>>
+            {
+                Data = list,
+                Count = await _repo.GetPostCount(it => it.UpTime < beforeDateTime)
+            };
         }
 
         /// <summary>
