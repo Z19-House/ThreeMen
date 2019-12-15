@@ -17,6 +17,10 @@ namespace fishbuy.Repositories
         public async Task<UploadedImage> DeleteImage(string imageHash)
         {
             var image = await GetImage(imageHash);
+            if (image == null)
+            {
+                return null;
+            }
             _context.UploadedImage.Remove(image);
             _context.SaveChanges();
             return image;

@@ -15,5 +15,7 @@ namespace fishbuy.Repositories
         Task<Post> UpdatePost(int postId, PostForUpload post);
         Task<Post> DeletePost(int postId);
         Task<int> GetPostCount();
+        Task<Comment> SaveComment(int postId, int userId, string content);
+        Task<Comment> DeleteComment(string commentId);
     }
 }

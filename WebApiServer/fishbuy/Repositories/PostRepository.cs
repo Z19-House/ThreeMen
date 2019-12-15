@@ -24,6 +24,10 @@ namespace fishbuy.Repositories
         public async Task<Post> DeletePost(int postId)
         {
             var item = await GetPost(postId);
+            if (item == null)
+            {
+                return null;
+            }
             _context.Post.Remove(item);
             return item;
         }
@@ -84,6 +88,10 @@ namespace fishbuy.Repositories
         public async Task<Post> UpdatePost(int postId, PostForUpload post)
         {
             var item = await _context.Post.Include(it => it.MediaLink).FirstOrDefaultAsync(it => it.PostId == postId);
+            if (item == null)
+            {
+                return null;
+            }
             item.Title = post.Title;
             item.Content = post.Content;
             item.Tags = post.Tags;
@@ -103,6 +111,32 @@ namespace fishbuy.Repositories
             }
             await _context.SaveChangesAsync();
             return item;
+        }
+
+        public async Task<Comment> DeleteComment(string commentId)
+        {
+            var item = await _context.Comment.FirstOrDefaultAsync(it => it.CommentId == commentId);
+            if (item == null)
+            {
+                return null;
+            }
+            _context.Comment.Remove(item);
+            _context.SaveChanges();
+            return item;
+        }
+
+        public async Task<Comment> SaveComment(int postId, int userId, string content)
+        {
+            var item = await _context.Comment.AddAsync(new Comment
+            {
+                PostId = postId,
+                UserId = userId,
+                CommentId = Guid.NewGuid().ToString(),
+                UpTime = DateTime.UtcNow,
+                Content = content
+            });
+            await _context.SaveChangesAsync();
+            return item.Entity;
         }
     }
 }

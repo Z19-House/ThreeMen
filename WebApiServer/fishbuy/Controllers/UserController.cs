@@ -66,7 +66,7 @@ namespace fishbuy.Controllers
         {
             _logger.LogInformation(nameof(EditUserInfo) + ": " + user);
 
-            var user2 = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
             return Ok();
         }

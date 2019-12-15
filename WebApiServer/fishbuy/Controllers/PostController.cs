@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace fishbuy.Controllers
@@ -110,13 +111,19 @@ namespace fishbuy.Controllers
         /// 发布评论
         /// </summary>
         /// <param name="postId"></param>
-        /// <param name="comment"></param>
+        /// <param name="content"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("{postId}/comment/new")]
-        public async Task<ActionResult<string>> AddComment(string postId, [FromBody]object comment)
+        public async Task<ActionResult<CommentLarge>> AddComment(int postId, [FromBody] string content)
         {
-            return CreatedAtAction(nameof(AddComment), comment);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
+            {
+                return BadRequest(new { error = "Unknow user ID." });
+            }
+            return CreatedAtAction(nameof(AddComment), CommentLarge.FromComment(await _repo.SaveComment(postId, uid, content), _imageServer));
         }
 
         /// <summary>
@@ -127,9 +134,14 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpDelete("{postId}/comment/{commentId}")]
-        public async Task<ActionResult<string>> DeleteComment(string commentId)
+        public async Task<ActionResult<CommentLarge>> DeleteComment(string commentId)
         {
-            return Ok();
+            var comment = await _repo.DeleteComment(commentId);
+            if (comment == null)
+            {
+                return NotFound();
+            }
+            return CommentLarge.FromComment(comment, _imageServer);
         }
 
 
