@@ -45,27 +45,19 @@ namespace fishbuy.Repositories
 
         public async Task<Post> GetPost(int postId)
         {
-            return await _context.Post.Include(it => it.User)
+            var post = await _context.Post.Include(it => it.User)
                 .Include(it => it.MediaLink)
-                .Include(it => it.Comment)
-                .Select(it =>
-                    new Post
-                    {
-                        PostId = it.PostId,
-                        UserId = it.UserId,
-                        UpTime = it.UpTime,
-                        EditTime = it.EditTime,
-                        Title = it.Title,
-                        Content = it.Content,
-                        Tags = it.Tags,
-                        Status = it.Status,
-                        Price = it.Price,
-                        Address = it.Address,
-                        User = it.User,
-                        MediaLink = it.MediaLink,
-                        Comment = it.Comment.OrderBy(c => c.UpTime).ToArray()
-                    })
                 .FirstOrDefaultAsync(it => it.PostId == postId);
+            if (post == null)
+            {
+                return null;
+            }
+            var comments = await _context.Comment.Include(it => it.User)
+                .Where(it => it.PostId == postId)
+                .OrderBy(it => it.UpTime)
+                .ToListAsync();
+            post.Comment = comments;
+            return post;
         }
 
         public async Task<int> GetPostCount()
@@ -88,15 +80,18 @@ namespace fishbuy.Repositories
                 EditTime = DateTime.UtcNow
             });
             await _context.SaveChangesAsync();
-            foreach (var media in post.Medias)
+            if (post.Medias != null)
             {
-                await _context.MediaLink.AddAsync(new MediaLink
+                foreach (var media in post.Medias)
                 {
-                    MediaId = Guid.NewGuid().ToString(),
-                    PostId = item.Entity.PostId,
-                    ResType = media.ResType.ToString(),
-                    ResUri = media.ResUri.RemoveServerAddress(_imageServer)
-                });
+                    await _context.MediaLink.AddAsync(new MediaLink
+                    {
+                        MediaId = Guid.NewGuid().ToString(),
+                        PostId = item.Entity.PostId,
+                        ResType = media.ResType.ToString(),
+                        ResUri = media.ResUri.RemoveServerAddress(_imageServer)
+                    });
+                }
             }
             await _context.SaveChangesAsync();
             return item.Entity;
@@ -116,15 +111,18 @@ namespace fishbuy.Repositories
             item.Price = post.Price;
             item.Address = post.Address;
             _context.MediaLink.RemoveRange(item.MediaLink);
-            foreach (var media in post.Medias)
+            if (post.Medias != null)
             {
-                await _context.MediaLink.AddAsync(new MediaLink
+                foreach (var media in post.Medias)
                 {
-                    MediaId = Guid.NewGuid().ToString(),
-                    PostId = postId,
-                    ResType = media.ResType.ToString(),
-                    ResUri = media.ResUri.RemoveServerAddress(_imageServer)
-                });
+                    await _context.MediaLink.AddAsync(new MediaLink
+                    {
+                        MediaId = Guid.NewGuid().ToString(),
+                        PostId = postId,
+                        ResType = media.ResType.ToString(),
+                        ResUri = media.ResUri.RemoveServerAddress(_imageServer)
+                    });
+                }
             }
             await _context.SaveChangesAsync();
             return item;
