@@ -38,7 +38,7 @@ namespace fishbuy.Repositories
             return await _context.Post.Include(it => it.User)
                 .Include(it => it.MediaLink)
                 .Where(it => it.UpTime < beforeDateTime)
-                .OrderBy(it => it.UpTime)
+                .OrderByDescending(it => it.UpTime)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();
