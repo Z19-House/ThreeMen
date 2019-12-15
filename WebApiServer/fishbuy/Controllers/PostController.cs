@@ -78,6 +78,12 @@ namespace fishbuy.Controllers
         [HttpPost("new")]
         public async Task<ActionResult<PostLarge>> PostNew([FromBody] PostForUpload post)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
+            {
+                return BadRequest(new { error = "Unknow user ID." });
+            }
+            post.UserId = uid;
             return PostLarge.FromPost(await _repo.SavePost(post), _imageServer);
         }
 
