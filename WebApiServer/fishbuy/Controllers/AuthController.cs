@@ -96,6 +96,34 @@ namespace fishbuy.Controllers
         }
 
         /// <summary>
+        /// 用户密码修改
+        /// </summary>
+        /// <param name="user">修改用户密码</param>
+        /// <returns></returns>
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [HttpPost("change_password")]
+        public async Task<ActionResult> ChangePassword([FromBody] UserChangePassword user)
+        {
+            _logger.LogInformation(nameof(ChangePassword) + ": " + user);
+
+            // 检查原密码是否正确，且当前登录用户是否与修改密码的用户相同
+            var userId = User.FindFirst(ClaimTypes.Name)?.Value;
+            var userFromRepo = await _repo.SignIn(new UserSmall { Username = user.Username, Password = user.OldPassword });
+            if (userFromRepo == null || userId == userFromRepo.UserId.ToString())
+            {
+                return Unauthorized();
+            }
+            if (!await _repo.UpdatePassword(userFromRepo.UserId, user.NewPassword))
+            {
+                return BadRequest(new { error = "Change password failed." });
+            }
+            return Ok();
+        }
+
+        /// <summary>
         /// 刷新 token
         /// </summary>
         /// <param name="accessTokenDto"></param>

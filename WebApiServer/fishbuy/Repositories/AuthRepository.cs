@@ -93,5 +93,16 @@ namespace fishbuy.Repositories
             return item.Token;
         }
 
+        public async Task<bool> UpdatePassword(int userId, string password)
+        {
+            var user = await _context.User.FirstOrDefaultAsync(it => it.UserId == userId);
+            if (user == null)
+            {
+                return false;
+            }
+            user.PasswordHash = password.GetMd5Hash();
+            _context.SaveChanges();
+            return true;
+        }
     }
 }

@@ -15,5 +15,6 @@ namespace fishbuy.Repositories
         Task<string> GetRefreshToken(int userId, string token);
         Task<string> SaveRefreshToken(int userId, string token);
         Task<string> DeleteRefreshToken(int userId, string token);
+        Task<bool> UpdatePassword(int userId, string password);
     }
 }
