@@ -22,7 +22,7 @@ namespace fishbuy.Utils
         {
             if (!url.IsNullOrEmpty() && url.StartsWith(imageServer))
             {
-                return url.TrimStart(imageServer.ToCharArray());
+                return Path.GetFileName(url);
             }
             return url;
         }

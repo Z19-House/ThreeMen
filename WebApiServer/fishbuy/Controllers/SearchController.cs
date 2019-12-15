@@ -15,12 +15,10 @@ namespace fishbuy.Controllers
     public class SearchController : ControllerBase
     {
         private readonly ILogger<SearchController> _logger;
-        private readonly FishbuyContext _context;
 
-        public SearchController(ILogger<SearchController> logger, FishbuyContext context)
+        public SearchController(ILogger<SearchController> logger)
         {
             _logger = logger;
-            _context = context;
         }
 
         /// <summary>

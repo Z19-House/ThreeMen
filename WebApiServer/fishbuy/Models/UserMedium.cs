@@ -19,8 +19,6 @@ namespace fishbuy.Models
         /// <summary>
         /// 用户名
         /// </summary>
-        [Required]
-        [StringLength(16, MinimumLength = 2, ErrorMessage = "You must specify a username between 2 and 16 characters.")]
         public string Username { get; set; }
 
         /// <summary>

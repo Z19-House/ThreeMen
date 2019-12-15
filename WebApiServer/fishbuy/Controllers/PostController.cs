@@ -25,7 +25,7 @@ namespace fishbuy.Controllers
         private readonly IPostRepository _repo;
         private readonly string _imageServer;
 
-        public PostController(ILogger<PostController> logger, FishbuyContext context, IConfiguration config, IPostRepository repo)
+        public PostController(ILogger<PostController> logger, IConfiguration config, IPostRepository repo)
         {
             _logger = logger;
             _repo = repo;
@@ -35,12 +35,19 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 获取所有发布内容
         /// </summary>
+        /// <param name="beforeDateTime">获取该时间前的数据（Utc时间）</param>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
         /// <returns></returns>
         [AllowAnonymous]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet]
         public async Task<ActionResult<ListResult<List<PostMedium>>>> GetAllPosts(DateTime beforeDateTime, int skip = 0, int take = 20)
         {
+            if (beforeDateTime == DateTime.MinValue)
+            {
+                beforeDateTime = DateTime.UtcNow;
+            }
             var posts = await _repo.GetPosts(beforeDateTime, skip, take);
             var list = new List<PostMedium>();
             foreach (var item in posts)
