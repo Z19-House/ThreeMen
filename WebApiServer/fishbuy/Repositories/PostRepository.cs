@@ -48,6 +48,23 @@ namespace fishbuy.Repositories
             return await _context.Post.Include(it => it.User)
                 .Include(it => it.MediaLink)
                 .Include(it => it.Comment)
+                .Select(it =>
+                    new Post
+                    {
+                        PostId = it.PostId,
+                        UserId = it.UserId,
+                        UpTime = it.UpTime,
+                        EditTime = it.EditTime,
+                        Title = it.Title,
+                        Content = it.Content,
+                        Tags = it.Tags,
+                        Status = it.Status,
+                        Price = it.Price,
+                        Address = it.Address,
+                        User = it.User,
+                        MediaLink = it.MediaLink,
+                        Comment = it.Comment.OrderBy(c => c.UpTime).ToArray()
+                    })
                 .FirstOrDefaultAsync(it => it.PostId == postId);
         }
 
