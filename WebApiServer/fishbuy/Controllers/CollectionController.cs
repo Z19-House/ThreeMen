@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using fishbuy.Models;
+using fishbuy.Repositories;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +17,13 @@ namespace fishbuy.Controllers
     [ApiController]
     public class CollectionController : ControllerBase
     {
+        private readonly ICollectionRepository _repo;
+
+        public CollectionController(ICollectionRepository repo)
+        {
+            _repo = repo;
+        }
+
         /// <summary>
         /// 获取收藏状态
         /// </summary>
@@ -25,13 +34,20 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{postId}")]
-        public async Task<ActionResult<CollectionInfo>> GetCollectionStatus(string postId)
+        public async Task<ActionResult<CollectionInfo>> GetCollectionStatus(int postId)
         {
-            return new CollectionInfo
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
             {
-                CollectionTime = DateTime.UtcNow,
-                Privacy = 0
-            };
+                return BadRequest(new { error = "Unknow user ID." });
+            }
+            var col = await _repo.GetCollection(uid, postId);
+            if (col == null)
+            {
+                return NotFound();
+            }
+
+            return CollectionInfo.FromCollection(col);
         }
 
         /// <summary>
@@ -43,15 +59,23 @@ namespace fishbuy.Controllers
         /// <response code="201">收藏添加或修改成功</response>
         [ProducesResponseType(StatusCodes.Status201Created)]
         [HttpPost("{postId}")]
-        public async Task<ActionResult<CollectionInfo>> AddOrEditCollection(string postId, [FromQuery] int privacy)
+        public async Task<ActionResult<CollectionInfo>> AddOrEditCollection(int postId, [FromQuery] int privacy)
         {
-            //Todo：收藏存在则修改，否则添加
-
-            return new CollectionInfo
+            // 收藏存在则修改，否则添加
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
             {
-                CollectionTime = DateTime.UtcNow,
-                Privacy = privacy
-            };
+                return BadRequest(new { error = "Unknow user ID." });
+            }
+            var col = await _repo.GetCollection(uid, postId);
+            if (col == null)
+            {
+                return CollectionInfo.FromCollection(await _repo.SaveCollection(uid, postId, privacy));
+            }
+            else
+            {
+                return CollectionInfo.FromCollection(await _repo.UpdateCollection(uid, postId, privacy));
+            }
         }
 
         /// <summary>
@@ -64,9 +88,14 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{postId}")]
-        public async Task<ActionResult> DeleteCollection(string postId)
+        public async Task<ActionResult<CollectionInfo>> DeleteCollection(int postId)
         {
-            return Ok();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
+            {
+                return BadRequest(new { error = "Unknow user ID." });
+            }
+            return CollectionInfo.FromCollection(await _repo.DeleteCollection(uid, postId));
         }
 
 

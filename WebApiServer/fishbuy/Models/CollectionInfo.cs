@@ -1,4 +1,5 @@
-﻿using System;
+﻿using fishbuy.Data;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -22,5 +23,13 @@ namespace fishbuy.Models
         /// </summary>
         public int Privacy { get; set; }
 
+        public static CollectionInfo FromCollection(Collection collection)
+        {
+            return new CollectionInfo
+            {
+                CollectionTime = collection.CollectionTime,
+                Privacy = collection.Privacy
+            };
+        }
     }
 }
