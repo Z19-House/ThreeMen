@@ -23,7 +23,7 @@
                     </el-form-item>
                     <el-form-item prop="name">
                         <el-button type="primary" @click="onSubmit(formlogin)">登录</el-button>
-                        <el-button>注册</el-button>
+                        <el-button v-on:click="register">注册</el-button>
                     </el-form-item>
                 </el-form>
             </div>
@@ -82,7 +82,7 @@ export default {
                 localStorage.setItem("accessToken", response.data.accessToken);
                 localStorage.setItem("refreshToken", response.data.refreshToken);
                 localStorage.setItem("username", formName.username);
-                this.$router.push({ path : '/'});
+                this.$router.push({ path : '/home'});
             })
             .catch((error)=> {
                 console.log(error);
@@ -94,6 +94,9 @@ export default {
                 }
 
             });
+        },
+        register(){
+            this.$router.push({ path : '/register'});
         }
     }
 }

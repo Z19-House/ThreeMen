@@ -1,0 +1,132 @@
+<template>
+    <div id="registerWindow">
+        <div id="register-style">
+            <div id="register-form">
+                <el-form :model="formRegister" :rules="rules" label-position="left" label-width="90px" ref="formRegister">
+                    <el-form-item
+                        label="用户名:"
+                        prop="username">
+                        <el-input 
+                            v-model="formRegister.username" 
+                            placeholder="请输入用户名"  
+                            prefix-icon="el-icon-user-solid"
+                        />
+                    </el-form-item>
+                    <el-form-item
+                        prop="password"
+                        label="密码:" >
+                        <el-input 
+                            v-model="formRegister.password"
+                            placeholder="请输入密码"  
+                            prefix-icon="el-icon-lock" 
+                            show-password
+                        />
+                    </el-form-item>
+                    <el-form-item
+                    label="确认密码:"
+                    prop="checkPass">
+                        <el-input 
+                            v-model="formRegister.checkPass"
+                            placeholder="请确认密码"  
+                            prefix-icon="el-icon-lock" 
+                            show-password
+                         
+                        />
+                    </el-form-item>
+                    <el-form-item prop="name" >
+                        <el-button type="primary" v-on:click="submitForm" style="width:100%">下一步</el-button>
+                    </el-form-item>
+                </el-form>
+            </div>
+        </div>
+    </div>
+</template>
+<style>
+
+#registerWindow{
+    margin: 100px auto 0;
+    width: 420px;
+}
+</style>
+<script>
+export default {
+    data(){
+        var userRe =/^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{2,16}$/;
+        var checkUsename = (rule, value, callback) => {
+            if (!value) {
+                return callback(new Error('用户名不能为空！'));
+            }
+            else if (value.length<2||value.length>16) {
+                callback(new Error('用户名应在2-16位之间！'));
+            } 
+            else if (!userRe.test(value)) {
+                callback(new Error('用户名必须为数字和字母组合'));
+            } 
+            else {
+                callback();
+            }   
+        };
+        var validatePass = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请输入密码'));
+            }else if(value.length<6||value.length>32){
+                callback(new Error('密码长度应在6-32位之间'));
+            }else{ 
+                if (this.formRegister.password !== '') {
+                    this.$refs.formRegister.validateField('checkPass');
+                }
+                callback();
+            }
+        };
+        var validatePass2 = (rule, value, callback) =>{
+            const reg = /^[a-zA-Z_\u4e00-\u9fa5]+$/
+            if (!reg.test(value)) {
+                callback(new Error('密码中不能含有空格！'))
+            } else {
+                callback()
+            }
+
+        };
+        var validateCheckPass = (rule, value, callback) => {
+            if (value === '') {
+                callback(new Error('请再次输入密码'));
+            } else if (value !== this.formRegister.password) {
+                callback(new Error('两次输入密码不一致!'));
+            } else {
+                callback();
+            }
+        };
+        
+        return {
+            formRegister:{
+                username:'' ,
+                password: '' ,
+                checkPass: ''
+            },
+            rules: {
+                username: [
+                    { validator: checkUsename, trigger: 'blur' }
+                ],
+                password: [
+                    { validator: validatePass, trigger: 'blur' },
+                    { validator: validatePass2, trigger: 'change' }
+                ],
+                checkPass: [
+                    { validator: validateCheckPass, trigger: 'blur' }
+                ],
+            }
+        }
+    },
+    methods: {
+        submitForm() {
+            this.$refs.formRegister.validate((valid) => {
+                if (valid) {
+                    alert('submit!');
+                } else {
+                    return false;
+                }
+            });
+        }
+    }
+}
+</script>

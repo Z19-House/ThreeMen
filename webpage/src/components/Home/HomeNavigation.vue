@@ -31,9 +31,7 @@
 </template>
 
 <style>
-#homeUser{
-    height: 90px;
-}
+
 
 </style>
 

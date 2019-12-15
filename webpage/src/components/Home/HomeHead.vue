@@ -1,5 +1,5 @@
 <template>
-    <div id="homeHead">
+    <div id="homeHead" >
         <el-row>
             <el-col :span="4">
                 <el-image :src="url" style="width: 110px; height: 110px;  float:right;"/>
@@ -23,12 +23,6 @@
     </div>
 </template>
 
-<style>
-#homeHead{
-    height: 110px;
-}
-
-</style>
 
 <script>
 export default {

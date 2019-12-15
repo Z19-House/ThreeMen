@@ -1,13 +1,18 @@
 <template>
+
   <div class="home">
     <homeNavigation
       :username="username"
       :userImage="userImage"
     />
-    <homeHead/>
-    <div id="homeBody">
-      <homeSortNavigation/>
+    <div class="homehead">
+     
+      <homeHead/>
     </div>
+    <div class="homeBody">
+      <homeCommodity/>
+    </div>
+    
   </div>
 </template>
 
@@ -15,7 +20,7 @@
 // @ is an alias to /src
 import homeHead from '@/components/Home/HomeHead.vue'
 import homeNavigation from '@/components/Home/HomeNavigation.vue'
-import homeSortNavigation from '@/components/Home/HomeSortNavigation.vue'
+import homeCommodity from '@/components/Home/HomeCommodity.vue'
 import axios from 'axios'
 
 export default {
@@ -24,7 +29,7 @@ export default {
   components:{
     homeHead:homeHead,
     homeNavigation:homeNavigation,
-    homeSortNavigation:homeSortNavigation
+    homeCommodity:homeCommodity
   },
    data(){
         return{
@@ -64,9 +69,13 @@ export default {
 </script>
 <style>
 
-#homeBody{
-  height: 1000px;
-  margin: 15px 13% 5px;
-  background-color: aqua;
+.homeBody{
+  margin-left: 13%;
+  margin-right: 13%;
+
+}
+.homehead{
+      height: 130px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, .12), 0 0 6px rgba(0, 0, 0, .04)
 }
 </style>
