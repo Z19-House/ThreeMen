@@ -97,7 +97,7 @@ namespace fishbuy.Controllers
             var posts = await _repo.GetUserPosts(beforeDateTime, username, skip, take);
             if (posts == null)
             {
-                return null;
+                return NotFound();
             }
             var list = new List<PostMedium>();
             foreach (var item in posts)
@@ -140,6 +140,10 @@ namespace fishbuy.Controllers
                 isAuthorized = true;
             }
             var collectPosts = await _repo.GetUserCollection(beforeDateTime, username, isAuthorized, skip, take);
+            if (collectPosts == null)
+            {
+                return NotFound();
+            }
             var list = new List<PostMedium>();
             foreach (var item in collectPosts)
             {
@@ -149,7 +153,7 @@ namespace fishbuy.Controllers
             return new ListResult<List<PostMedium>>
             {
                 Data = list,
-                Count = await _repo.GetUserCollectionCount(username, it => it.CollectionTime < beforeDateTime)
+                Count = await _repo.GetUserCollectionCount(username, isAuthorized, it => it.CollectionTime < beforeDateTime)
             };
         }
     }

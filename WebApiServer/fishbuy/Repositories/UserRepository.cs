@@ -71,8 +71,9 @@ namespace fishbuy.Repositories
                 return null;
             }
             return await _context.Collection.Include(it => it.Post)
-                .Where(it => it.UserId == item.UserId && it.CollectionTime < beforeDateTime)
+                .Where(it => it.UserId == item.UserId && it.CollectionTime < beforeDateTime && (withPrivacy || it.Privacy == 0))
                 .Select(it => it.Post)
+                .Include(it=>it.User)
                 .OrderByDescending(it => it.UpTime)
                 .Skip(skip)
                 .Take(take)
@@ -89,14 +90,14 @@ namespace fishbuy.Repositories
             return await _context.Post.Where(it => it.UserId == item.UserId).CountAsync(predicate);
         }
 
-        public async Task<int> GetUserCollectionCount(string username, Expression<Func<Collection, bool>> predicate)
+        public async Task<int> GetUserCollectionCount(string username, bool withPrivacy, Expression<Func<Collection, bool>> predicate)
         {
             var item = await GetUser(username);
             if (item == null)
             {
                 return 0;
             }
-            return await _context.Collection.Where(it => it.UserId == item.UserId).CountAsync(predicate);
+            return await _context.Collection.Where(it => it.UserId == item.UserId && (withPrivacy || it.Privacy == 0)).CountAsync(predicate);
         }
     }
 }

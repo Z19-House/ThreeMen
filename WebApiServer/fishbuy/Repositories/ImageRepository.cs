@@ -49,6 +49,7 @@ namespace fishbuy.Repositories
                 FileName = fileName,
                 UploadTime = dateTime
             });
+            await _context.SaveChangesAsync();
             return image.Entity;
         }
     }
