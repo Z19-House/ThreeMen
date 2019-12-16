@@ -20,6 +20,7 @@ namespace fishbuy.Repositories
         public async Task<List<Post>> GetPostsByTitle(string title, DateTime beforeDateTime, int skip, int take)
         {
             return await _context.Post.Include(it => it.User)
+                .Include(it => it.MediaLink)
                 .Where(it => it.UpTime < beforeDateTime && it.Title.Contains(title))
                 .OrderByDescending(it => it.UpTime)
                 .Skip(skip)
@@ -36,6 +37,7 @@ namespace fishbuy.Repositories
         public async Task<List<Post>> GetPostsByTag(string tag, DateTime beforeDateTime, int skip, int take)
         {
             return await _context.Post.Include(it => it.User)
+                .Include(it => it.MediaLink)
                 .Where(it => it.UpTime < beforeDateTime && it.Tags.Contains(tag))
                 .OrderByDescending(it => it.UpTime)
                 .Skip(skip)

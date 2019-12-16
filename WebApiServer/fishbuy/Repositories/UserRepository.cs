@@ -56,7 +56,9 @@ namespace fishbuy.Repositories
             {
                 return null;
             }
-            return await _context.Post.Where(it => it.UserId == item.UserId && it.UpTime < beforeDateTime)
+            return await _context.Post.Include(it => it.User)
+                .Include(it => it.MediaLink)
+                .Where(it => it.UserId == item.UserId && it.UpTime < beforeDateTime)
                 .OrderByDescending(it => it.UpTime)
                 .Skip(skip)
                 .Take(take)
@@ -74,6 +76,7 @@ namespace fishbuy.Repositories
                 .Where(it => it.UserId == item.UserId && it.CollectionTime < beforeDateTime && (withPrivacy || it.Privacy == 0))
                 .Select(it => it.Post)
                 .Include(it=>it.User)
+                .Include(it => it.MediaLink)
                 .OrderByDescending(it => it.UpTime)
                 .Skip(skip)
                 .Take(take)

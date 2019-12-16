@@ -73,23 +73,23 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 删除图片
         /// </summary>
-        /// <param name="imageHash"></param>
+        /// <param name="imageName"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpDelete("{imageHash}")]
-        public async Task<ActionResult> DeleteImage(string imageHash)
+        [HttpDelete("{imageName}")]
+        public async Task<ActionResult> DeleteImage(string imageName)
         {
             // 若文件存在则删除
-            if (await _repo.ImageExists(imageHash))
+            if (await _repo.ImageExists(imageName))
             {
-                var image = await _repo.GetImage(imageHash);
+                var image = await _repo.GetImage(imageName);
                 if (System.IO.File.Exists(Path.Combine(ImageFolderPath, image.FileName)))
                 {
                     System.IO.File.Delete(Path.Combine(ImageFolderPath, image.FileName));
                 }
-                await _repo.DeleteImage(imageHash);
+                await _repo.DeleteImage(imageName);
             }
             else
             {
