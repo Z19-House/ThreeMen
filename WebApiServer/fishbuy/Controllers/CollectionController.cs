@@ -70,7 +70,14 @@ namespace fishbuy.Controllers
             var col = await _repo.GetCollection(uid, postId);
             if (col == null)
             {
-                return CollectionInfo.FromCollection(await _repo.SaveCollection(uid, postId, privacy));
+                try
+                {
+                    return CollectionInfo.FromCollection(await _repo.SaveCollection(uid, postId, privacy));
+                }
+                catch
+                {
+                    return NotFound();
+                }
             }
             else
             {

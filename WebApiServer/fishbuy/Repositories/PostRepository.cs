@@ -24,12 +24,19 @@ namespace fishbuy.Repositories
 
         public async Task<Post> DeletePost(int postId)
         {
-            var item = await GetPost(postId);
+            var item = await _context.Post.Include(it => it.Comment)
+                .Include(it => it.MediaLink)
+                .Include(it => it.Collection)
+                .FirstOrDefaultAsync(it => it.PostId == postId);
             if (item == null)
             {
                 return null;
             }
+            _context.MediaLink.RemoveRange(item.MediaLink);
+            _context.Comment.RemoveRange(item.Comment);
+            _context.Collection.RemoveRange(item.Collection);
             _context.Post.Remove(item);
+            _context.SaveChanges();
             return item;
         }
 

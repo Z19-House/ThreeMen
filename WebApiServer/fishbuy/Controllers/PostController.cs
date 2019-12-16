@@ -105,9 +105,25 @@ namespace fishbuy.Controllers
         /// <param name="post"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPut("{postId}")]
         public async Task<ActionResult<PostLarge>> EditPost(int postId, [FromBody] PostForUpload post)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
+            {
+                return BadRequest(new { error = "Unknow user ID." });
+            }
+            var item = await _repo.GetPost(postId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            if (item.UserId != uid)
+            {
+                return Unauthorized();
+            }
             return PostLarge.FromPost(await _repo.UpdatePost(postId, post), _imageServer);
         }
 
@@ -121,6 +137,20 @@ namespace fishbuy.Controllers
         [HttpDelete("{postId}")]
         public async Task<ActionResult<PostLarge>> DeletePost(int postId)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
+            {
+                return BadRequest(new { error = "Unknow user ID." });
+            }
+            var item = await _repo.GetPost(postId);
+            if (item == null)
+            {
+                return NotFound();
+            }
+            if (item.UserId != uid)
+            {
+                return Unauthorized();
+            }
             return PostLarge.FromPost(await _repo.DeletePost(postId), _imageServer);
         }
 
@@ -153,10 +183,19 @@ namespace fishbuy.Controllers
         [HttpDelete("{postId}/comment/{commentId}")]
         public async Task<ActionResult<CommentLarge>> DeleteComment(string commentId)
         {
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
+            {
+                return BadRequest(new { error = "Unknow user ID." });
+            }
             var comment = await _repo.DeleteComment(commentId);
             if (comment == null)
             {
                 return NotFound();
+            }
+            if (comment.UserId != uid)
+            {
+                return Unauthorized();
             }
             return CommentLarge.FromComment(comment, _imageServer);
         }

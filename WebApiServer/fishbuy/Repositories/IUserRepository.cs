@@ -12,9 +12,10 @@ namespace fishbuy.Repositories
     {
         Task<User> GetUser(string username);
         Task<User> UpdateUser(string username, UserLarge user);
+        Task<User> DeleteUser(string username);
         Task<List<Post>> GetUserPosts(DateTime beforeDateTime, string username, int skip, int take);
         Task<List<Post>> GetUserCollection(DateTime beforeDateTime, string username, bool withPrivacy, int skip, int take);
-        Task<int> GetUserPostsCount(string username, Expression<Func<Post, bool>> predicate);
-        Task<int> GetUserCollectionCount(string username, bool withPrivacy, Expression<Func<Collection, bool>> predicate);
+        Task<int> GetUserPostsCount(string username, DateTime beforeDateTime);
+        Task<int> GetUserCollectionCount(string username, bool withPrivacy, DateTime beforeDateTime);
     }
 }

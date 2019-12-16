@@ -49,6 +49,19 @@ namespace fishbuy.Repositories
             return item;
         }
 
+        public async Task<User> DeleteUser(string username)
+        {
+            var item = await GetUser(username);
+            if (item == null)
+            {
+                return null;
+            }
+            _context.RefreshToken.RemoveRange(_context.RefreshToken.Where(it => it.UserId == item.UserId));
+            _context.User.Remove(item);
+            _context.SaveChanges();
+            return item;
+        }
+
         public async Task<List<Post>> GetUserPosts(DateTime beforeDateTime, string username, int skip, int take)
         {
             var item = await GetUser(username);
@@ -75,7 +88,7 @@ namespace fishbuy.Repositories
             return await _context.Collection.Include(it => it.Post)
                 .Where(it => it.UserId == item.UserId && it.CollectionTime < beforeDateTime && (withPrivacy || it.Privacy == 0))
                 .Select(it => it.Post)
-                .Include(it=>it.User)
+                .Include(it => it.User)
                 .Include(it => it.MediaLink)
                 .OrderByDescending(it => it.UpTime)
                 .Skip(skip)
@@ -83,24 +96,24 @@ namespace fishbuy.Repositories
                 .ToListAsync();
         }
 
-        public async Task<int> GetUserPostsCount(string username, Expression<Func<Post, bool>> predicate)
+        public async Task<int> GetUserPostsCount(string username, DateTime beforeDateTime)
         {
             var item = await GetUser(username);
             if (item == null)
             {
                 return 0;
             }
-            return await _context.Post.Where(it => it.UserId == item.UserId).CountAsync(predicate);
+            return await _context.Post.Where(it => it.UserId == item.UserId && it.UpTime < beforeDateTime).CountAsync();
         }
 
-        public async Task<int> GetUserCollectionCount(string username, bool withPrivacy, Expression<Func<Collection, bool>> predicate)
+        public async Task<int> GetUserCollectionCount(string username, bool withPrivacy, DateTime beforeDateTime)
         {
             var item = await GetUser(username);
             if (item == null)
             {
                 return 0;
             }
-            return await _context.Collection.Where(it => it.UserId == item.UserId && (withPrivacy || it.Privacy == 0)).CountAsync(predicate);
+            return await _context.Collection.Where(it => it.UserId == item.UserId && (withPrivacy || it.Privacy == 0) && it.CollectionTime < beforeDateTime).CountAsync();
         }
     }
 }

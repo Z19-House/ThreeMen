@@ -77,6 +77,44 @@ namespace fishbuy.Controllers
         }
 
         /// <summary>
+        /// 删除用户
+        /// </summary>
+        /// <param name="username"></param>
+        /// <returns></returns>
+        [Authorize]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpDelete("{username}")]
+        public async Task<ActionResult<UserLarge>> DeleteUser(string username)
+        {
+            _logger.LogInformation(nameof(EditUserInfo) + ": " + username);
+
+            var uname = User.FindFirst(ClaimTypes.Name)?.Value;
+            var uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (uname != username && uid != username)
+            {
+                return Unauthorized();
+            }
+            var user = await _repo.GetUser(uid);
+            if (user == null)
+            {
+                return NotFound();
+            }
+            var postsCount = await _repo.GetUserPostsCount(user.Username, DateTime.UtcNow);
+            if (postsCount != 0)
+            {
+                return BadRequest(new { error = $"User has {postsCount} posts." });
+            }
+            var collectionCount = await _repo.GetUserCollectionCount(user.Username, true, DateTime.UtcNow);
+            if (collectionCount != 0)
+            {
+                return BadRequest(new { error = $"User has {collectionCount} collection." });
+            }
+            return UserLarge.FromUser(await _repo.DeleteUser(user.Username), _imageServer);
+        }
+
+        /// <summary>
         /// 获取用户发布的内容
         /// </summary>
         /// <param name="beforeDateTime">获取该时间前的数据（Utc时间）</param>
@@ -108,7 +146,7 @@ namespace fishbuy.Controllers
             return new ListResult<List<PostMedium>>
             {
                 Data = list,
-                Count = await _repo.GetUserPostsCount(username, it => it.UpTime < beforeDateTime)
+                Count = await _repo.GetUserPostsCount(username, beforeDateTime)
             };
         }
 
@@ -153,7 +191,7 @@ namespace fishbuy.Controllers
             return new ListResult<List<PostMedium>>
             {
                 Data = list,
-                Count = await _repo.GetUserCollectionCount(username, isAuthorized, it => it.CollectionTime < beforeDateTime)
+                Count = await _repo.GetUserCollectionCount(username, isAuthorized, beforeDateTime)
             };
         }
     }
