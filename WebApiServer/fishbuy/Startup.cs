@@ -51,6 +51,7 @@ namespace fishbuy
                 options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddControllers();
+            services.AddTimedJob();
             services.AddScoped<IAuthRepository, AuthRepository>();
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IImageRepository, ImageRepository>();
@@ -133,6 +134,8 @@ namespace fishbuy
             }
 
             //app.UseHttpsRedirection();
+
+            app.UseTimedJob();
 
             app.UseRouting();
 
