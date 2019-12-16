@@ -25,15 +25,17 @@ namespace fishbuy.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthRepository _repo;
         private readonly ILogger<UserController> _logger;
+        private readonly IAuthRepository _repo;
         private readonly IAuthService _service;
+        private readonly string _imageServer;
 
         public AuthController(ILogger<UserController> logger, IAuthRepository repo, IConfiguration config, IAuthService service)
         {
             _logger = logger;
             _repo = repo;
             _service = service;
+            _imageServer = config.GetSection("Server:Images").Value;
         }
 
         /// <summary>
@@ -91,8 +93,7 @@ namespace fishbuy.Controllers
             {
                 return BadRequest(new { error = "User register fail!" });
             }
-            registeredUser.PasswordHash = null;
-            return new CreatedResult(nameof(SignUp), registeredUser);
+            return new CreatedResult(nameof(SignUp), UserLarge.FromUser(registeredUser, _imageServer));
         }
 
         /// <summary>
