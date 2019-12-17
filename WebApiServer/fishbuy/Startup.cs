@@ -41,7 +41,7 @@ namespace fishbuy
                 options.AddPolicy(MyAllowSpecificOrigins,
                 builder =>
                 {
-                    builder.WithOrigins("http://localhost:8080")
+                    builder.WithOrigins("http://localhost:8080", "http://106.12.14.192")
                            .AllowCredentials()
                            .AllowAnyHeader();
                 });
@@ -118,14 +118,17 @@ namespace fishbuy
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             // Enable middleware to serve generated Swagger as a JSON endpoint.
-            app.UseSwagger();
+            app.UseSwagger(c =>
+            {
+                c.RouteTemplate = "api/swagger/{documentName}/swagger.json";
+            });
 
             // Enable middleware to serve swagger-ui (HTML, JS, CSS, etc.),
             // specifying the Swagger JSON endpoint.
             app.UseSwaggerUI(c =>
             {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "FishBuy API V1");
-                c.RoutePrefix = string.Empty;
+                c.SwaggerEndpoint("/api/swagger/v1/swagger.json", "FishBuy API V1");
+                c.RoutePrefix = "api";
             });
 
             if (env.IsDevelopment())

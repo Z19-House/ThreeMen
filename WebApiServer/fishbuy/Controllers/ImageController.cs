@@ -22,7 +22,7 @@ namespace fishbuy.Controllers
     public class ImageController : ControllerBase
     {
         private readonly IImageRepository _repo;
-        private readonly string[] LimitedImageTypes = { ".jpg", ".jpeg", ".gif", ".png", ".bmp" };
+        private readonly string[] LimitedImageTypes = { ".jpg", ".jpeg", ".gif", ".png", ".bmp", ".svg" };
         private readonly string ImageFolderPath;
 
         public ImageController(IImageRepository repo, IConfiguration config)
