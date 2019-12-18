@@ -1,5 +1,4 @@
 <template>
-
   <div class="home">
     <homeNavigation
       :username="username"
