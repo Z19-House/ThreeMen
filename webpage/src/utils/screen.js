@@ -7,7 +7,7 @@ export function getScrollTop(){
       documentScrollTop = document.documentElement.scrollTop;
     }
     scrollTop = (bodyScrollTop - documentScrollTop > 0) ? bodyScrollTop : documentScrollTop;
-    return scrollTop+2;
+    return scrollTop;
   }
   
   

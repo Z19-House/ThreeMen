@@ -44,45 +44,7 @@
           </el-col>
         </ul>
       </el-row>
-      <!--     <ul class="list">
-        <router-link
-          v-for="(shopData,index) in objectArray"
-          class="list-item"
-          :key="index"
-          ref="productInformation"
-          :to="{ name: 'productBrowsing',params: { postId: shopData.postId}}"
-          tag="li"
-        >
-          <el-image
-            style="width: 150px; height: 150px ;margin: 30px auto 10px;"
-            :src="shopData.imageUrl"
-            fit="cover"
-            lazy
-          ></el-image>
-          <div style="line-height: 30px; padding: 0 20px; height: 30px;">
-            <p style="font-size: 14px;line-height: 20px;">{{shopData.title}}</p>
-          </div>
-          <div
-            style=" font-size: 16px;line-height: 30px;height: 30px;color: #e1251b;"
-            v-if="shopData.tags"
-          >
-            <el-tag
-              v-for="(tags,index) in shopData.tags.split(',')"
-              :key="index"
-              :type="type[index]"
-              effect="dark"
-              size="mini"
-              style="margin-right:3px"
-            >#{{tags}}</el-tag>
-          </div>
-          <div style="margin-top: 10px;">
-            <div style=" font-size: 16px;line-height: 18px;height: 18px;color: #e1251b;">
-              <i>¥</i>
-              <span style="font-size: 20px; font-weight: 700;">{{shopData.price}}</span>
-            </div>
-          </div>
-        </router-link>
-      </ul>-->
+    
     </div>
   </div>
 </template>
@@ -107,7 +69,7 @@ export default {
     this.LoadMerchandise();
   },
   destroyed() {
-    //window.removeEventListener("scroll", this.load, false);
+    window.removeEventListener("scroll", this.load, false);
   },
   methods: {
     load() {

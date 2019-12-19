@@ -14,25 +14,25 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path : '/login',
-    name : 'login',
-    component : Login
+    path: '/login',
+    name: 'login',
+    component: Login
   },
   {
-    path : '/',
-    name : 'home',
-    component : Home,
-    children:[
+    path: '/',
+    name: 'home',
+    component: Home,
+    children: [
       {
-        path : '/',
-        name : 'homeCommodity',
-        component : homeCommodity,
+        path: '/',
+        name: 'homeCommodity',
+        component: homeCommodity,
       },
       {
-        path : '/productBrowsing/:postId',
-        name : 'productBrowsing',
-        component : productBrowsing,
-        beforeEnter:(to,from,next)=>{
+        path: '/productBrowsing/:postId',
+        name: 'productBrowsing',
+        component: productBrowsing,
+        beforeEnter: (to, from, next) => {
           console.log('即将进入：', to);
           console.log('即将离开：', from);
           next();
@@ -41,22 +41,22 @@ const routes = [
     ]
   },
   {
-    path : '/register',
-    component : Register,
-    children:[
+    path: '/register',
+    component: Register,
+    children: [
       {
-        path : '/',
-        name : 'registerWindow',
-        component : registerWindow,
+        path: '/',
+        name: 'registerWindow',
+        component: registerWindow,
       },
       {
-        path : '/userInformation',
-        name : 'userInformation',
-        component : UserInformation,
+        path: '/userInformation',
+        name: 'userInformation',
+        component: UserInformation,
       }
     ]
   }
-    
+
 ]
 
 const router = new VueRouter({

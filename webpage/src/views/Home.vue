@@ -5,8 +5,8 @@
       <homeHead />
     </div>
     <div class="homeBody">
-      <keep-alive include="homeCommodity">
-        <router-view/>
+      <keep-alive>
+        <router-view />
       </keep-alive>
     </div>
   </div>
@@ -21,17 +21,19 @@ export default {
   name: "home",
   components: {
     homeHead: homeHead,
-    homeNavigation: homeNavigation,
+    homeNavigation: homeNavigation
   },
   data() {
     return {
       username: "未登录",
-      userImage: ""
+      userImage: "",
+      scrollY: 0
     };
   },
   mounted: function() {
     this.LoadUserInformation();
   },
+
   methods: {
     errorHandler() {
       return true;
