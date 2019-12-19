@@ -5,20 +5,40 @@ import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import registerWindow from '../components/Register/RegisterWindow.vue'
 import UserInformation from '../components/Register/UserInformation.vue'
+import homeCommodity from "@/components/Home/HomeCommodity.vue";
+import productBrowsing from "@/components/Home/ProductBrowsing.vue";
+
 
 
 Vue.use(VueRouter)
 
 const routes = [
   {
-    path : '/',
+    path : '/login',
     name : 'login',
     component : Login
   },
   {
-    path : '/home',
+    path : '/',
     name : 'home',
     component : Home,
+    children:[
+      {
+        path : '/',
+        name : 'homeCommodity',
+        component : homeCommodity,
+      },
+      {
+        path : '/productBrowsing/:postId',
+        name : 'productBrowsing',
+        component : productBrowsing,
+        beforeEnter:(to,from,next)=>{
+          console.log('即将进入：', to);
+          console.log('即将离开：', from);
+          next();
+        }
+      }
+    ]
   },
   {
     path : '/register',

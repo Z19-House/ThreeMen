@@ -50,9 +50,6 @@
 </style>
 
 <script>
-import axios from "axios";
-
-axios.defaults.withCredentials = true;
 export default {
   data() {
     return {
@@ -65,7 +62,7 @@ export default {
   methods: {
     onSubmit(formName) {
       // let _this=this;
-      axios({
+      this.axios({
         method: "post",
         url: "http://118.25.64.161/api/auth/signin",
 

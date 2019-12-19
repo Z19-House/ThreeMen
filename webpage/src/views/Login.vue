@@ -15,11 +15,9 @@
 </template>
 
 <script>
-import axios from "axios";
 import loginHead from "@/components/Login/LoginHeader.vue";
 import loginWindow from "@/components/Login/LoginWindow.vue";
 
-axios.defaults.withCredentials = true;
 export default {
   components: {
     loginHead: loginHead,

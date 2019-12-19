@@ -91,9 +91,6 @@
 </style>
 
 <script>
-import axios from "axios";
-
-
 export default {
   data() {
     return {
@@ -113,7 +110,7 @@ export default {
   },
   methods: {
     submitForm(ruleForms) {
-      axios({
+      this.axios({
         method: "put",
         url: "http://118.25.64.161/api/user/edit",
 
@@ -137,7 +134,7 @@ export default {
     },
     handleAvatarSuccess(response) {
       this.ruleForm.imageUrl = response.resUri;
-      axios({
+      this.axios({
         method: "put",
         url: "http://118.25.64.161/api/image/"+response.resUri,
         headers: {

@@ -47,7 +47,6 @@
 }
 </style>
 <script>
-import axios from "axios";
 
 export default {
   data() {
@@ -112,7 +111,7 @@ export default {
   },
   methods: {
     RegisterUser() {
-      axios({
+      this.axios({
         method: "post",
         url: "http://118.25.64.161/api/auth/signup",
 
@@ -136,7 +135,7 @@ export default {
         });
     },
     login() {
-      axios({
+      this.axios({
         method: "post",
         url: "http://118.25.64.161/api/auth/signin",
         data: JSON.stringify({

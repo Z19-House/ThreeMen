@@ -5,7 +5,9 @@
       <homeHead />
     </div>
     <div class="homeBody">
-      <homeCommodity />
+      <keep-alive include="homeCommodity">
+        <router-view/>
+      </keep-alive>
     </div>
   </div>
 </template>
@@ -14,15 +16,12 @@
 // @ is an alias to /src
 import homeHead from "@/components/Home/HomeHead.vue";
 import homeNavigation from "@/components/Home/HomeNavigation.vue";
-import homeCommodity from "@/components/Home/HomeCommodity.vue";
-import axios from "axios";
 
 export default {
   name: "home",
   components: {
     homeHead: homeHead,
     homeNavigation: homeNavigation,
-    homeCommodity: homeCommodity
   },
   data() {
     return {
@@ -39,7 +38,7 @@ export default {
     },
     LoadUserInformation: function() {
       console.log("我发送了消息");
-      axios({
+      this.axios({
         method: "get",
         url:
           "http://118.25.64.161/api/user/" + localStorage.getItem("username"),
@@ -62,8 +61,8 @@ export default {
 </script>
 <style>
 .homeBody {
-  margin-left: 13%;
-  margin-right: 13%;
+  margin-left: 20%;
+  margin-right: 20%;
 }
 .homehead {
   height: 130px;

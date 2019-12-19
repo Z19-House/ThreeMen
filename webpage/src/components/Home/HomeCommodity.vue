@@ -6,51 +6,83 @@
       </h1>
     </div>
     <div>
-      <ul class="list">
-        <li v-for="(shopData,index) in objectArray" class="list-item" :key="index" ref="asd">
-          <a>
-            <el-image
-              style="width: 150px; height: 150px ;margin: 30px auto 40px;"
-              :src="shopData.imageUrl"
-              fit="fill"
-              lazy
-            ></el-image>
-            <div style="clear: both;line-height: 24px; padding: 0 20px; height: 65px;">
-              <p
-                style="height: 48px;
-                                    font-size: 14px;
-                                    line-height: 24px;
-                                    text-align: left;
-                                    color: #666;
-                                    -webkit-transition: color .2s ease;
-                                    transition: color .2s ease;
-                                    word-break: break-all;
-                                    overflow: hidden;
-                                    text-overflow: ellipsis;
-                                    display: -webkit-box;
-                                    -webkit-line-clamp: 2;
-                                    -webkit-box-orient: vertical;"
-              >{{shopData.title}}</p>
-              <div style="margin-top: 10px;">
-                <div
-                  style="display: inline-block;
-                                            font-size: 16px;
-                                            line-height: 18px;
-                                            height: 18px;
-                                            color: #e1251b;"
-                >
-                  <i>¥</i>
-                  <span
-                    style="font-size: 20px;
-                                                    font-weight: 700;
-                                                    font-family: arial,sans-serif;"
-                  >{{shopData.price}}</span>
+      <el-row :gutter="10">
+        <ul>
+          <el-col :span="6" v-for="(shopData,index) in objectArray" :key="index">
+            <router-link :to="{ name: 'productBrowsing',params: { postId: shopData.postId}}">
+              <el-card :body-style="{ padding: '0px' }" class="list-item" shadow="hover">
+                <el-image
+                  style="width: 150px; height: 150px ;"
+                  :src="shopData.imageUrl"
+                  fit="cover"
+                  lazy
+                ></el-image>
+                <div style="line-height: 30px; padding: 0 20px; height: 30px;">
+                  <p style="font-size: 14px;line-height: 20px;">{{shopData.title}}</p>
                 </div>
-              </div>
+                <div
+                  style=" font-size: 16px;line-height: 30px;height: 30px;color: #e1251b;"
+                  v-if="shopData.tags"
+                >
+                  <el-tag
+                    v-for="(tags,index) in shopData.tags.split(',')"
+                    :key="index"
+                    :type="type[index]"
+                    effect="dark"
+                    size="mini"
+                    style="margin-right:3px"
+                  >#{{tags}}</el-tag>
+                </div>
+                <div style="margin-top: 10px;">
+                  <div style=" font-size: 16px;line-height: 18px;height: 18px;color: #e1251b;">
+                    <i>¥</i>
+                    <span style="font-size: 20px; font-weight: 700;">{{shopData.price}}</span>
+                  </div>
+                </div>
+              </el-card>
+            </router-link>
+          </el-col>
+        </ul>
+      </el-row>
+      <!--     <ul class="list">
+        <router-link
+          v-for="(shopData,index) in objectArray"
+          class="list-item"
+          :key="index"
+          ref="productInformation"
+          :to="{ name: 'productBrowsing',params: { postId: shopData.postId}}"
+          tag="li"
+        >
+          <el-image
+            style="width: 150px; height: 150px ;margin: 30px auto 10px;"
+            :src="shopData.imageUrl"
+            fit="cover"
+            lazy
+          ></el-image>
+          <div style="line-height: 30px; padding: 0 20px; height: 30px;">
+            <p style="font-size: 14px;line-height: 20px;">{{shopData.title}}</p>
+          </div>
+          <div
+            style=" font-size: 16px;line-height: 30px;height: 30px;color: #e1251b;"
+            v-if="shopData.tags"
+          >
+            <el-tag
+              v-for="(tags,index) in shopData.tags.split(',')"
+              :key="index"
+              :type="type[index]"
+              effect="dark"
+              size="mini"
+              style="margin-right:3px"
+            >#{{tags}}</el-tag>
+          </div>
+          <div style="margin-top: 10px;">
+            <div style=" font-size: 16px;line-height: 18px;height: 18px;color: #e1251b;">
+              <i>¥</i>
+              <span style="font-size: 20px; font-weight: 700;">{{shopData.price}}</span>
             </div>
-          </a>
-        </li>
-      </ul>
+          </div>
+        </router-link>
+      </ul>-->
     </div>
   </div>
 </template>
@@ -63,9 +95,11 @@ import {
 
 var data = 0;
 export default {
+  name: "homeCommodity",
   data() {
     return {
-      objectArray: []
+      objectArray: [],
+      type: ["", "success", "warning", "danger", "info"]
     };
   },
   mounted() {
@@ -73,7 +107,7 @@ export default {
     this.LoadMerchandise();
   },
   destroyed() {
-    window.removeEventListener("scroll", this.load, false);
+    //window.removeEventListener("scroll", this.load, false);
   },
   methods: {
     load() {
@@ -134,7 +168,6 @@ export default {
         .catch(error => {
           console.log(error);
         });
-      console.log(this.$ref.asd);
     }
   }
 };
@@ -150,7 +183,7 @@ export default {
   float: left;
   width: 230px;
   height: 322px;
-  margin: 0 5px 10px;
+  margin-bottom: 20px;
   list-style: none;
 }
 </style>
