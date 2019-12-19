@@ -30,12 +30,12 @@ namespace fishbuy.Models
         /// </summary>
         public DateTime UploadTime { get; set; }
 
-        public static MediaLarge FromUploadedImage(UploadedImage uploadedImage)
+        public static MediaLarge FromUploadedImage(UploadedImage uploadedImage, string imageServer)
         {
             return new MediaLarge
             {
                 Hash = uploadedImage.Hash,
-                ResUri = uploadedImage.FileName,
+                ResUri = uploadedImage.FileName.AddServerAddress(imageServer),
                 ResType = ResType.Image,
                 UploadTime = uploadedImage.UploadTime
             };

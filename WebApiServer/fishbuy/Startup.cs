@@ -43,7 +43,8 @@ namespace fishbuy
                 {
                     builder.WithOrigins("http://localhost:8080", "http://106.12.14.192")
                            .AllowCredentials()
-                           .AllowAnyHeader();
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
                 });
             });
 

@@ -22,13 +22,15 @@ namespace fishbuy.Controllers
     public class ImageController : ControllerBase
     {
         private readonly IImageRepository _repo;
-        private readonly string[] LimitedImageTypes = { ".jpg", ".jpeg", ".gif", ".png", ".bmp", ".svg" };
-        private readonly string ImageFolderPath;
+        private readonly string[] _limitedImageTypes = { ".jpg", ".jpeg", ".gif", ".png", ".bmp", ".svg" };
+        private readonly string _imageFolderPath;
+        private readonly string _imageServer;
 
         public ImageController(IImageRepository repo, IConfiguration config)
         {
             _repo = repo;
-            ImageFolderPath = config.GetSection("AppSettings:ImageFolder").Value;
+            _imageFolderPath = config.GetSection("AppSettings:ImageFolder").Value;
+            _imageServer = config.GetSection("Server:Images").Value;
         }
 
         /// <summary>
@@ -42,7 +44,7 @@ namespace fishbuy.Controllers
         [HttpPost("upload")]
         public async Task<ActionResult<MediaLarge>> UploadImage(IFormFile formFile)
         {
-            if (!LimitedImageTypes.Contains(Path.GetExtension(formFile.FileName).ToLower()))
+            if (!_limitedImageTypes.Contains(Path.GetExtension(formFile.FileName).ToLower()))
             {
                 return BadRequest(new { error = "Not supported image format." });
             }
@@ -59,7 +61,7 @@ namespace fishbuy.Controllers
             {
                 string fileName = $"{md5HashString}{Path.GetExtension(formFile.FileName)}";
 
-                using (var stream = new FileStream(Path.Combine(ImageFolderPath, fileName), FileMode.Create))
+                using (var stream = new FileStream(Path.Combine(_imageFolderPath, fileName), FileMode.Create))
                 {
                     await formFile.CopyToAsync(stream);
                 }
@@ -67,13 +69,13 @@ namespace fishbuy.Controllers
                 await _repo.SaveImage(md5HashString, fileName, DateTime.UtcNow);
             }
 
-            return MediaLarge.FromUploadedImage(await _repo.GetImage(md5HashString));
+            return MediaLarge.FromUploadedImage(await _repo.GetImage(md5HashString), _imageServer);
         }
 
         /// <summary>
         /// 删除图片
         /// </summary>
-        /// <param name="imageName"></param>
+        /// <param name="imageName">文件名或具体url</param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -81,13 +83,14 @@ namespace fishbuy.Controllers
         [HttpDelete("{imageName}")]
         public async Task<ActionResult> DeleteImage(string imageName)
         {
+            imageName = Path.GetFileNameWithoutExtension(imageName.RemoveServerAddress(_imageServer));
             // 若文件存在则删除
             if (await _repo.ImageExists(imageName))
             {
                 var image = await _repo.GetImage(imageName);
-                if (System.IO.File.Exists(Path.Combine(ImageFolderPath, image.FileName)))
+                if (System.IO.File.Exists(Path.Combine(_imageFolderPath, image.FileName)))
                 {
-                    System.IO.File.Delete(Path.Combine(ImageFolderPath, image.FileName));
+                    System.IO.File.Delete(Path.Combine(_imageFolderPath, image.FileName));
                 }
                 await _repo.DeleteImage(imageName);
             }
