@@ -67,7 +67,12 @@
 
 <script>
 export default {
-  data() {
+              :body-style="{
+                zoom:' 1',
+                padding: '15px',
+                border-bottom: '1px solid #ddd'
+                }
+                "
     return {
       details: {},
       type: ["", "success", "warning", "danger", "info"]
