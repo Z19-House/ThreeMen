@@ -72,34 +72,5 @@ namespace fishbuy.Controllers
             return MediaLarge.FromUploadedImage(await _repo.GetImage(md5HashString), _imageServer);
         }
 
-        /// <summary>
-        /// 删除图片
-        /// </summary>
-        /// <param name="imageName">文件名或具体url</param>
-        /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        [HttpDelete("{imageName}")]
-        public async Task<ActionResult> DeleteImage(string imageName)
-        {
-            imageName = Path.GetFileNameWithoutExtension(imageName.RemoveServerAddress(_imageServer));
-            // 若文件存在则删除
-            if (await _repo.ImageExists(imageName))
-            {
-                var image = await _repo.GetImage(imageName);
-                if (System.IO.File.Exists(Path.Combine(_imageFolderPath, image.FileName)))
-                {
-                    System.IO.File.Delete(Path.Combine(_imageFolderPath, image.FileName));
-                }
-                await _repo.DeleteImage(imageName);
-            }
-            else
-            {
-                return NotFound();
-            }
-
-            return Ok();
-        }
     }
 }

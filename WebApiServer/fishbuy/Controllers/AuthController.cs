@@ -105,7 +105,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-        [HttpPost("change_password")]
+        [HttpPost("change-password")]
         public async Task<ActionResult> ChangePassword([FromBody] UserChangePassword user)
         {
             _logger.LogInformation(nameof(ChangePassword) + ": " + user);
@@ -131,7 +131,7 @@ namespace fishbuy.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpPost("refresh_token")]
+        [HttpPost("refresh-token")]
         public async Task<ActionResult<AccessTokenDto>> RefreshToken([FromBody] AccessTokenDto accessTokenDto)
         {
             var principal = _service.GetPrincipalFromExpiredToken(accessTokenDto.AccessToken);
