@@ -1,0 +1,128 @@
+<template>
+  <q-page v-if="post">
+    <q-carousel
+      v-if="post.medias.length > 0"
+      swipeable
+      animated
+      v-model="slide"
+      navigation
+      infinite
+      :autoplay="5000"
+      :fullscreen.sync="fullscreen"
+      transition-prev="slide-right"
+      transition-next="slide-left"
+      height="300px"
+    >
+      <q-carousel-slide
+        v-for="(media, index) in post.medias"
+        :key="index"
+        :name="index"
+        class="column flex-center"
+        style="padding: 0px"
+      >
+        <q-img :src="media.resUri" contain />
+      </q-carousel-slide>
+
+      <template v-slot:control>
+        <q-carousel-control position="bottom-right" :offset="[18, 18]">
+          <q-btn
+            push
+            round
+            dense
+            color="white"
+            text-color="primary"
+            :icon="fullscreen ? 'fullscreen_exit' : 'fullscreen'"
+            @click="fullscreen = !fullscreen"
+          />
+        </q-carousel-control>
+      </template>
+    </q-carousel>
+
+    <div class="q-pa-md column q-gutter-md">
+      <q-card>
+        <q-card-section>
+          <div class="text-h5 text-red">￥{{ post.price }}</div>
+          <div class="text-h6">{{ post.title }}</div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-section>
+          <div class="text-subtitle2">{{ post.content }}</div>
+        </q-card-section>
+
+        <q-separator />
+
+        <q-item :to="{name: 'user', params: {id: post.user.userId}}">
+          <q-item-section avatar>
+            <q-avatar size="2.2rem">
+              <img :src="post.user.imageUrl" />
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ post.user.nickname }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-card>
+
+      <q-card v-if="post.comments.length > 0">
+        <q-card-section>
+          <div class="text-h6">评论</div>
+        </q-card-section>
+        <div v-for="(comment, index) in post.comments" :key="index">
+          <q-separator />
+          <q-item :to="{name: 'user', params: {id: comment.user.userId}}">
+            <q-item-section avatar>
+              <q-avatar size="2.2rem">
+                <img :src="comment.user.imageUrl" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ comment.user.nickname }}</q-item-label>
+              <q-item-label caption>{{ comment.upTime }}</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-card-section>
+            <div class="text-subtitle2">{{ comment.content }}</div>
+          </q-card-section>
+        </div>
+      </q-card>
+    </div>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-btn fab icon="add" color="accent" to="/new-post" />
+    </q-page-sticky>
+  </q-page>
+</template>
+
+<script>
+// @ is an alias to /src
+import api from "@/api";
+
+export default {
+  name: "post",
+  props: {
+    id: [String, Number]
+  },
+  data() {
+    return {
+      post: null,
+      slide: 0,
+      fullscreen: false
+    };
+  },
+  components: {},
+  methods: {
+    async getPostDetail() {
+      try {
+        let response = await api.getPostDetail(this.id);
+        this.post = response.data;
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    }
+  },
+  created() {
+    this.getPostDetail();
+  }
+};
+</script>
