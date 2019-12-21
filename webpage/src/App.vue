@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive>
+    <keep-alive include="home">
       <router-view />
     </keep-alive>
   </div>
@@ -18,10 +18,13 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #2c3e50;
-  background-color: #f4f4f4;
   text-align: center;
+
 }
 body {
+  overflow:auto !important;
   margin: 0 0 0;
+      background-color: #f4f4f4;
+
 }
 </style>

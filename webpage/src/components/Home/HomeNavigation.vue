@@ -14,17 +14,14 @@
         <el-menu-item index="2-2">选项2</el-menu-item>
         <el-menu-item index="2-3">选项3</el-menu-item>
       </el-submenu>
-      <el-submenu style="float:right" index="3" @click.native="userClick">
+      <el-menu-item style="float:right" index="3" @click.native="userClick">
         <template slot="title">
-          <el-avatar :size="40" :src="userImage" @error="errorHandler" fit="fill">
+          <el-avatar :size="40" :src="userImage" @error="errorHandler" fit="cover">
             <img src="../../errorImage/errorImage.png" />
           </el-avatar>
           <span>{{username}}</span>
         </template>
-        <el-menu-item index="3-1">选项1</el-menu-item>
-        <el-menu-item index="3-2">选项2</el-menu-item>
-        <el-menu-item index="3-3">选项3</el-menu-item>
-      </el-submenu>
+      </el-menu-item>
     </el-menu>
   </div>
 </template>
@@ -43,11 +40,8 @@ export default {
       return true;
     },
     userClick() {
-      if (localStorage.getItem("username") != null) {
-        console.log("个人信息界面");
-      } else {
-        this.$router.push({ path: "/login" });
-      }
+      console.log(this.username);
+      this.$router.push({ name: "user", params: { username: this.username } });
     }
   }
 };

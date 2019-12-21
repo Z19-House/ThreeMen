@@ -5,8 +5,8 @@
       <homeHead />
     </div>
     <div class="homeBody">
-      <keep-alive>
-        <router-view />
+      <keep-alive include="homeCommodity">
+        <router-view :userImage="userImage" />
       </keep-alive>
     </div>
   </div>
@@ -26,8 +26,7 @@ export default {
   data() {
     return {
       username: "未登录",
-      userImage: "",
-      scrollY: 0
+      userImage: ""
     };
   },
   mounted: function() {
@@ -42,17 +41,11 @@ export default {
       console.log("我发送了消息");
       this.axios({
         method: "get",
-        url:
-          "http://118.25.64.161/api/user/" + localStorage.getItem("username"),
-        headers: {
-          "Content-Type": "application/json"
-        }
+        url: "user/" + localStorage.getItem("username")
       })
         .then(response => {
           this.username = response.data.username;
           this.userImage = response.data.imageUrl;
-          console.log(this.username);
-          console.log(this.userImage);
         })
         .catch(error => {
           console.log(error);
@@ -63,8 +56,7 @@ export default {
 </script>
 <style>
 .homeBody {
-  margin-left: 20%;
-  margin-right: 20%;
+  background-color: #f4f4f4;
 }
 .homehead {
   height: 130px;

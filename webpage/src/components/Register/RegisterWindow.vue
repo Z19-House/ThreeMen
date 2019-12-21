@@ -41,10 +41,7 @@
   </div>
 </template>
 <style>
-#registerWindow {
-  margin: 100px auto 0;
-  width: 420px;
-}
+
 </style>
 <script>
 
@@ -113,15 +110,13 @@ export default {
     RegisterUser() {
       this.axios({
         method: "post",
-        url: "http://118.25.64.161/api/auth/signup",
+        url: "auth/signup",
 
         data: JSON.stringify({
           username: this.formRegister.username,
           password: this.formRegister.password
         }),
-        headers: {
-          "Content-Type": "application/json"
-        }
+
       })
         .then(response => {
           console.log("response.status");
@@ -137,20 +132,19 @@ export default {
     login() {
       this.axios({
         method: "post",
-        url: "http://118.25.64.161/api/auth/signin",
+        url: "auth/signin",
         data: JSON.stringify({
           username: this.formRegister.username,
           password: this.formRegister.password
-        }),
-        headers: {
-          "Content-Type": "application/json"
-        }
+        })
+
       })
         .then(response => {
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
           localStorage.setItem("username", this.formRegister.username);
-          this.$router.push({ name: "userInformation" });
+          this.axios.defaults.headers.common['Authorization'] ="Bearer " + localStorage.getItem("accessToken");
+          this.$router.replace({ name: "userInformation"});
         })
         .catch(error => {
           console.log(error);

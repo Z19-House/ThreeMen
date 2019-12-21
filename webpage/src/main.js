@@ -1,10 +1,11 @@
 import Vue from 'vue'
 import App from './App.vue'
-import axios from './axios/axios'
+import axios from './api/api'
 import router from './router'
 import './plugins/element.js'
 
 Vue.config.productionTip = false
+
 
 new Vue({
   router,

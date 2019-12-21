@@ -4,10 +4,10 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue'
 import Register from '../views/Register.vue'
 import registerWindow from '../components/Register/RegisterWindow.vue'
-import UserInformation from '../components/Register/UserInformation.vue'
-import homeCommodity from "@/components/Home/HomeCommodity.vue";
-import productBrowsing from "@/components/Home/ProductBrowsing.vue";
-
+import UserInformation from '../components/global/UserInformation.vue'
+import homeCommodity from "../views/HomeCommodity.vue";
+import productBrowsing from "../views/ProductBrowsing.vue";
+import user from "../views/User.vue"
 
 
 Vue.use(VueRouter)
@@ -32,16 +32,13 @@ const routes = [
         path: '/productBrowsing/:postId',
         name: 'productBrowsing',
         component: productBrowsing,
-        beforeEnter: (to, from, next) => {
-          console.log('即将进入：', to);
-          console.log('即将离开：', from);
-          next();
-        }
+
       }
     ]
   },
   {
     path: '/register',
+    name:'register',
     component: Register,
     children: [
       {
@@ -55,6 +52,20 @@ const routes = [
         component: UserInformation,
       }
     ]
+  },
+  {
+    path: '/user/:username',
+    name: 'user',
+    component: user,
+    beforeEnter: (to, from, next) => {
+      if (localStorage.getItem("accessToken")) {     //如果localStorage里存了用户名，则表示已登录
+        next(true);
+      } else {
+        next('/login');
+          
+        }
+      }
+    
   }
 
 ]

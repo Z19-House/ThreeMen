@@ -25,7 +25,6 @@ export default {
   data() {
     return {
       seachVaule: "",
-      fit: "fill",
       url: require("../../assets/logo.png")
     };
   }

@@ -64,18 +64,16 @@ export default {
       // let _this=this;
       this.axios({
         method: "post",
-        url: "http://118.25.64.161/api/auth/signin",
-
+        url: "auth/signin",
         data: JSON.stringify(formName),
-        headers: {
-          "Content-Type": "application/json"
-        }
+
       })
         .then(response => {
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
           localStorage.setItem("username", formName.username);
-          this.$router.push({ path: "/home" });
+          this.axios.defaults.headers.common['Authorization'] ="Bearer " + localStorage.getItem("accessToken"); //添加请求头
+          this.$router.replace({ path: "/" });
         })
         .catch(error => {
           console.log(error);
@@ -88,7 +86,7 @@ export default {
         });
     },
     register() {
-      this.$router.push({ path: "/register" });
+      this.$router.replace({ path: "/register" });
     }
   }
 };
