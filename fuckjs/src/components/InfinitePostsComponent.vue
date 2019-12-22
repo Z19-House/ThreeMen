@@ -35,7 +35,7 @@ export default {
     return {
       items: [],
       skip: 0,
-      take: 2,
+      take: 20,
       datetime: new Date().toUTCString()
     };
   },

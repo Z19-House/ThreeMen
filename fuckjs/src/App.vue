@@ -9,6 +9,7 @@
         </q-toolbar-title>
 
         <q-input
+          v-if="$route.name!=='search'"
           dark
           dense
           standout
@@ -29,7 +30,7 @@
             <img src="http://118.25.64.161/images/efd0fc7d20532fdaf769a25683617711.png" />
           </q-avatar>
           <q-menu auto-close>
-            <q-list style="min-width: 100px">
+            <q-list v-if="!userId" style="min-width: 100px">
               <q-item clickable to="/sign-in">
                 <q-item-section>登录</q-item-section>
               </q-item>
@@ -37,14 +38,17 @@
                 <q-item-section>注册</q-item-section>
               </q-item>
               <q-separator />
-              <q-item clickable to="/user">
-                <q-item-section>查看</q-item-section>
+            </q-list>
+            <q-list v-else style="min-width: 100px">
+              <q-separator />
+              <q-item clickable @click="myPage">
+                <q-item-section>个人主页</q-item-section>
               </q-item>
               <q-item clickable to="/edit-user">
-                <q-item-section>编辑</q-item-section>
+                <q-item-section>信息编辑</q-item-section>
               </q-item>
               <q-separator />
-              <q-item clickable @click="onClick">
+              <q-item clickable @click="signOut">
                 <q-item-section>注销</q-item-section>
               </q-item>
             </q-list>
@@ -70,9 +74,18 @@ export default {
       text: ""
     };
   },
+  computed: {
+    userId () { 
+        return this.$store.state.username 
+      },
+  },
   methods: {
-    onClick() {
+    myPage() {
+      this.$router.push({ name: "user", params: { id: this.userId } });
+    },
+    signOut() {
       api.signOut();
+      this.$store.commit("removeUsername");
       this.$router.push("sign-out");
       this.$router.push("/");
     },
