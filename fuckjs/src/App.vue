@@ -76,7 +76,7 @@ export default {
   },
   computed: {
     userId () { 
-        return this.$store.state.username 
+        return this.$store.state.username
       },
   },
   methods: {
@@ -86,8 +86,8 @@ export default {
     signOut() {
       api.signOut();
       this.$store.commit("removeUsername");
-      this.$router.push("sign-out");
-      this.$router.push("/");
+      this.$router.replace("sign-out");
+      this.$router.replace("/");
     },
     search() {
       this.$router.push({

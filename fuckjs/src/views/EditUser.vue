@@ -7,6 +7,7 @@
         :http-request="uploadImage"
         :show-file-list="false"
         :before-upload="beforeImageUpload"
+        accept=".jpg, .jpeg, .gif, .png, .bmp, .svg"
       >
         <q-avatar size="100px">
           <q-img
@@ -73,7 +74,7 @@ export default {
           this.imageUrl
         );
         if (this.firstSign) {
-          this.$router.push("/");
+          this.$router.replace("/");
         } else {
           this.$router.go(-1);
         }

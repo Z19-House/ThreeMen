@@ -37,7 +37,7 @@ export default {
       try {
         await api.signIn(this.username, this.password);
         this.$store.commit("setUsername", this.username);
-        this.$router.push("/");
+        this.$router.replace("/");
       } catch (error) {
         console.log(error.response.data);
       }

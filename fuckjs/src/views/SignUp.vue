@@ -48,7 +48,7 @@ export default {
       await api.signUp(this.username, this.password);
       await api.signIn(this.username, this.password);
       this.$store.commit("setUsername", this.username);
-      this.$router.push({name: "edit-user", query: { firstSign: true }})
+      this.$router.replace({name: "edit-user", query: { firstSign: true }})
     }
   }
 };
