@@ -19,11 +19,11 @@
         </q-avatar>
       </el-upload>
 
-      <q-input outlined v-model="nickname" placeholder="昵称" />
-      <q-input outlined v-model="phone" placeholder="手机" />
-      <q-input outlined v-model="birthDate" placeholder="生日" />
-      <q-input outlined v-model="sex" placeholder="性别" />
-      <q-input outlined v-model="address" placeholder="地址" />
+      <q-input outlined v-model="nickname" label="昵称" />
+      <q-input outlined v-model="phone" label="手机" />
+      <q-input outlined v-model="birthDate" label="生日" />
+      <q-input outlined v-model="sex" label="性别" />
+      <q-input outlined v-model="address" label="地址" />
 
       <q-btn color="primary" label="保存用户信息" @click="editUserInfo" />
     </div>

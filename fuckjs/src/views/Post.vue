@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <q-page v-if="post">
     <q-carousel
       v-if="post.medias.length > 0"
@@ -87,9 +87,26 @@
           </q-card-section>
         </div>
       </q-card>
+
+      <q-dialog v-model="inputComment" persistent>
+        <q-card style="min-width: 300px">
+          <q-card-section>
+            <div class="text-h6">评论</div>
+          </q-card-section>
+
+          <q-card-section>
+            <q-input dense v-model="commentString" autofocus @keyup.enter="addComment" />
+          </q-card-section>
+
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="取消" v-close-popup />
+            <q-btn flat label="发表评论" @click="addComment" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
     </div>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn fab icon="add" color="accent" to="/new-post" />
+      <q-btn fab icon="message" color="accent" @click="inputComment = true" />
     </q-page-sticky>
   </q-page>
 </template>
@@ -107,7 +124,9 @@ export default {
     return {
       post: null,
       slide: 0,
-      fullscreen: false
+      fullscreen: false,
+      inputComment: false,
+      commentString: ""
     };
   },
   components: {},
@@ -118,6 +137,18 @@ export default {
         this.post = response.data;
       } catch (error) {
         console.log(error.response.data);
+      }
+    },
+    async addComment() {
+      this.inputComment = false;
+      if (this.commentString) {
+        try {
+          await api.newComment(this.post.postId, this.commentString);
+          this.commentString = "";
+          this.getPostDetail();
+        } catch (error) {
+          console.log(error.response.data);
+        }
       }
     }
   },

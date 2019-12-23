@@ -4,14 +4,14 @@ axios.defaults.baseURL = 'http://118.25.64.161/api';
 if (localStorage.getItem("AccessToken") !== null) {
     axios.defaults.headers.common['Authorization'] = "bearer " + localStorage.getItem("AccessToken");
 }
-axios.defaults.headers.post['Content-Type'] = 'appliction/json';
+axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 class api {
     static async signIn(username, password) {
         let response = await axios
             .post("/auth/signin", {
-                username: username,
-                password: password
+                username,
+                password
             });
         localStorage.setItem("Username", username);
         localStorage.setItem("AccessToken", response.data.accessToken);
@@ -30,8 +30,8 @@ class api {
     static signUp(username, password) {
         return axios
             .post("/auth/signup", {
-                username: username,
-                password: password
+                username,
+                password
             });
     }
 
@@ -44,20 +44,20 @@ class api {
 
     static editUserInfo(nickname, phone, birthDate, sex, address, imageUrl) {
         return axios.put("/user/edit", {
-            nickname: nickname,
-            phone: phone,
-            birthDate: birthDate,
-            sex: sex,
-            address: address,
-            imageUrl: imageUrl
+            nickname,
+            phone,
+            birthDate,
+            sex,
+            address,
+            imageUrl
         })
     }
 
     static changePassword(oldPassword, newPassword) {
-        return axios.post("/auth/change_password", {
+        return axios.post("/auth/change-password", {
             username: localStorage.getItem("Username"),
-            oldPassword: oldPassword,
-            newPassword: newPassword
+            oldPassword,
+            newPassword
         })
     }
 
@@ -73,13 +73,13 @@ class api {
         })
     }
 
-    static getPosts(url, datetime, skip, take) {
+    static getPosts(url, beforeDateTime, skip, take) {
         return axios
             .get(url, {
                 params: {
-                    beforeDateTime: datetime,
-                    skip: skip,
-                    take: take
+                    beforeDateTime,
+                    skip,
+                    take
                 }
             })
     }
@@ -90,25 +90,25 @@ class api {
 
     static newPost(title, content, tags, status, price, address, medias) {
         return axios.post("/post/new", {
-            title: title,
-            content: content,
-            tags: tags,
-            status: status,
-            price: price,
-            address: address,
-            medias: medias
+            title,
+            content,
+            tags,
+            status,
+            price,
+            address,
+            medias
         })
     }
 
     static editPost(id, title, content, tags, status, price, address, medias) {
         return axios.put("/post/" + id, {
-            title: title,
-            content: content,
-            tags: tags,
-            status: status,
-            price: price,
-            address: address,
-            medias: medias
+            title,
+            content,
+            tags,
+            status,
+            price,
+            address,
+            medias
         })
     }
 
@@ -117,29 +117,29 @@ class api {
     }
 
     static newComment(id, content) {
-        return axios.post("/post/" + id + "/comment/new", content);
+        return axios.post("/post/" + id + "/comment/new", JSON.stringify(content));
     }
 
     static deleteComment(id, commentId) {
         return axios.delete("/post/" + id + "/comment/" + commentId);
     }
 
-    static searchPostByTitle(keyword, datetime, skip, take) {
+    static searchPostByTitle(keyword, beforeDateTime, skip, take) {
         return axios.get("/search/posts" + keyword, {
             params: {
-                beforeDateTime: datetime,
-                skip: skip,
-                take: take
+                beforeDateTime,
+                skip,
+                take
             }
         });
     }
 
-    static searchPostByTag(keyword, datetime, skip, take) {
+    static searchPostByTag(keyword, beforeDateTime, skip, take) {
         return axios.get("/search/tags" + keyword, {
             params: {
-                beforeDateTime: datetime,
-                skip: skip,
-                take: take
+                beforeDateTime,
+                skip,
+                take
             }
         });
     }
@@ -147,8 +147,8 @@ class api {
     static searchUser(keyword, skip, take) {
         return axios.get("/search/user" + keyword, {
             params: {
-                skip: skip,
-                take: take
+                skip,
+                take
             }
         });
     }
