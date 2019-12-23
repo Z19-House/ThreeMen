@@ -30,6 +30,11 @@ const routes = [
     component: () => import('../views/Post.vue')
   },
   {
+    path: '/edit-post',
+    name: 'edit-post',
+    props: true,
+    component: () => import('../views/EditPost.vue')
+  },  {
     path: '/user/:id',
     name: 'user',
     props: true,

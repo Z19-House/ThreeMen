@@ -55,7 +55,7 @@ export default {
       this.imageUrl=response.data.resUri;
     },
     async getUserInfo() {
-      let response = await api.getUserInfo();
+      let response = await api.getUserInfo(this.$store.state.userId);
       this.nickname = response.data.nickname;
       this.phone = response.data.phone;
       this.birthDate = response.data.birthDate;

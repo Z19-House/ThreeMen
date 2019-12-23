@@ -1,4 +1,4 @@
-<template>
+﻿<template>
   <q-card>
     <q-img
       v-if="post.imageUrl"
@@ -35,8 +35,8 @@
 
     <q-item :to="{name: 'user', params: {id: post.userId}}">
       <q-item-section avatar>
-        <q-avatar size="2.2rem">
-          <img :src="post.userImageUrl" />
+        <q-avatar size="2.2rem" >
+          <q-img :src="post.userImageUrl" />
         </q-avatar>
       </q-item-section>
 

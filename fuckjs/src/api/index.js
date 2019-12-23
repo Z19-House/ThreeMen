@@ -13,7 +13,6 @@ class api {
                 username,
                 password
             });
-        localStorage.setItem("Username", username);
         localStorage.setItem("AccessToken", response.data.accessToken);
         localStorage.setItem("RefreshToken", response.data.refreshToken);
         axios.defaults.headers.common['Authorization'] = "bearer " + localStorage.getItem("AccessToken");
@@ -21,7 +20,6 @@ class api {
     }
 
     static signOut() {
-        localStorage.removeItem("Username");
         localStorage.removeItem("AccessToken");
         localStorage.removeItem("RefreshToken");
         axios.defaults.headers.common['Authorization'] = "";
@@ -36,9 +34,6 @@ class api {
     }
 
     static getUserInfo(id) {
-        if (!id) {
-            id = localStorage.getItem("Username");
-        }
         return axios.get("/user/" + id);
     }
 
@@ -53,9 +48,9 @@ class api {
         })
     }
 
-    static changePassword(oldPassword, newPassword) {
+    static changePassword(userId, oldPassword, newPassword) {
         return axios.post("/auth/change-password", {
-            username: localStorage.getItem("Username"),
+            username: userId,
             oldPassword,
             newPassword
         })

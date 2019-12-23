@@ -5,17 +5,28 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    username: localStorage.getItem("Username")
+    username: localStorage.getItem("Username"),
+    userId: localStorage.getItem("UserId"),
+    userImage: localStorage.getItem("UserImage"),
   },
   mutations: {
-    setUsername(state, value) {
-      state.username = value
-      localStorage.setItem("Username", value)
+    setUser(state, value) {
+      state.userId = value.userId
+      state.username = value.username
+      state.userImage = value.userImage
+      localStorage.setItem("UserId", value.userId)
+      localStorage.setItem("Username", value.username)
+      localStorage.setItem("UserImage", value.userImage)
     },
-    removeUsername(state) {
+    removeUser(state) {
+      state.userId = ""
       state.username = ""
+      state.userImage = ""
+      localStorage.removeItem("UserId")
       localStorage.removeItem("Username")
-    }
+      localStorage.removeItem("UserImage")
+    },
+
   },
   actions: {
   },

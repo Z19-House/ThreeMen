@@ -30,7 +30,7 @@
 
 <script>
 // @ is an alias to /src
-import api from '@/api'
+import api from "@/api";
 
 export default {
   name: "sign-up",
@@ -47,8 +47,13 @@ export default {
     async signUp() {
       await api.signUp(this.username, this.password);
       await api.signIn(this.username, this.password);
-      this.$store.commit("setUsername", this.username);
-      this.$router.replace({name: "edit-user", query: { firstSign: true }})
+      let user = (await api.getUserInfo(this.username)).data;
+      this.$store.commit("setUser", {
+        userId: user.userId,
+        username: user.username,
+        userImage: user.imageUrl
+      });
+      this.$router.replace({ name: "edit-user", query: { firstSign: true } });
     }
   }
 };

@@ -7,10 +7,8 @@
       v-model="slide"
       navigation
       infinite
-      :autoplay="5000"
+      :autoplay="fullscreen ? false : 5000"
       :fullscreen.sync="fullscreen"
-      transition-prev="slide-right"
-      transition-next="slide-left"
       height="300px"
     >
       <q-carousel-slide
@@ -20,7 +18,7 @@
         class="column flex-center"
         style="padding: 0px"
       >
-        <q-img :src="media.resUri" contain />
+        <q-img :src="media.resUri" spinner-color="red" contain />
       </q-carousel-slide>
 
       <template v-slot:control>
@@ -53,7 +51,10 @@
 
         <q-separator />
 
-        <q-item :to="{name: 'user', params: {id: post.user.userId}}">
+        <q-item
+          v-if="post.user.userId != this.$store.state.userId"
+          :to="{name: 'user', params: {id: post.user.userId}}"
+        >
           <q-item-section avatar>
             <q-avatar size="2.2rem">
               <img :src="post.user.imageUrl" />
@@ -62,6 +63,20 @@
           <q-item-section>
             <q-item-label>{{ post.user.nickname }}</q-item-label>
           </q-item-section>
+        </q-item>
+        <q-item v-else>
+          <q-item-section avatar>
+            <q-avatar size="2.2rem">
+              <img :src="post.user.imageUrl" />
+            </q-avatar>
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ post.user.nickname }}</q-item-label>
+          </q-item-section>
+          <q-card-actions align="right" style="padding:0px">
+            <q-btn dense color="primary" @click="editPost" style="width:80px">编辑</q-btn>
+            <q-btn dense color="red" @click="confirmDelete = true">删除</q-btn>
+          </q-card-actions>
         </q-item>
       </q-card>
 
@@ -88,7 +103,7 @@
         </div>
       </q-card>
 
-      <q-dialog v-model="inputComment" persistent>
+      <q-dialog v-model="inputComment">
         <q-card style="min-width: 300px">
           <q-card-section>
             <div class="text-h6">评论</div>
@@ -120,16 +135,17 @@ export default {
   props: {
     id: [String, Number]
   },
+  components: {},
   data() {
     return {
       post: null,
       slide: 0,
       fullscreen: false,
       inputComment: false,
-      commentString: ""
+      commentString: "",
+      confirmDelete: false
     };
   },
-  components: {},
   methods: {
     async getPostDetail() {
       try {
@@ -150,7 +166,14 @@ export default {
           console.log(error.response.data);
         }
       }
-    }
+    },
+    editPost() {
+      this.$router.push({
+        name: "edit-post",
+        params: { id: this.post.postId }
+      });
+    },
+    deletePost() {}
   },
   created() {
     this.getPostDetail();

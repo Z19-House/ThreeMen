@@ -27,7 +27,8 @@
 
         <q-btn round>
           <q-avatar size="42px">
-            <img src="http://118.25.64.161/images/efd0fc7d20532fdaf769a25683617711.png" />
+            <img v-if="userImage" :src="userImage" />
+            <img v-else src="http://118.25.64.161/images/efd0fc7d20532fdaf769a25683617711.png" />
           </q-avatar>
           <q-menu auto-close>
             <q-list v-if="!userId" style="min-width: 100px">
@@ -40,7 +41,9 @@
               <q-separator />
             </q-list>
             <q-list v-else style="min-width: 100px">
-              <q-separator />
+              <q-item dense style="color:gray;font-size:13px">
+                <q-item-section>@{{ username }}</q-item-section>
+              </q-item>
               <q-item clickable @click="myPage">
                 <q-item-section>个人主页</q-item-section>
               </q-item>
@@ -75,9 +78,15 @@ export default {
     };
   },
   computed: {
-    userId () { 
-        return this.$store.state.username
-      },
+    userId() {
+      return this.$store.state.userId;
+    },
+    username() {
+      return this.$store.state.username;
+    },
+    userImage() {
+      return this.$store.state.userImage;
+    }
   },
   methods: {
     myPage() {
@@ -85,7 +94,7 @@ export default {
     },
     signOut() {
       api.signOut();
-      this.$store.commit("removeUsername");
+      this.$store.commit("removeUser");
       this.$router.replace("sign-out");
       this.$router.replace("/");
     },

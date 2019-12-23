@@ -36,7 +36,12 @@ export default {
     async signIn() {
       try {
         await api.signIn(this.username, this.password);
-        this.$store.commit("setUsername", this.username);
+        let user = (await api.getUserInfo(this.username)).data;
+        this.$store.commit("setUser", {
+          userId: user.userId,
+          username: user.username,
+          userImage: user.imageUrl
+        });
         this.$router.replace("/");
       } catch (error) {
         console.log(error.response.data);

@@ -1,5 +1,5 @@
-<template>
-  <postEditerComponent :post="post" @savePost="newPost" />
+﻿<template>
+  <postEditerComponent :post="post" @savePost="editPost" />
 </template>
 
 <script>
@@ -8,27 +8,24 @@ import api from "@/api";
 import postEditerComponent from "@/components/PostEditerComponent.vue";
 
 export default {
-  name: "new-post",
+  name: "edit-post",
   components: {
     postEditerComponent
   },
+  props: {
+    id: Number
+  },
   data() {
     return {
-      post: {
-        title: "",
-        content: "",
-        tags: [],
-        price: 0,
-        address: "",
-        medias: []
-      }
+      post: {}
     };
   },
   methods: {
-    async newPost(postData) {
+    async editPost(postData) {
       try {
         console.log(postData);
-        await api.newPost(
+        await api.editPost(
+          this.id,
           postData.title,
           postData.content,
           postData.tags.join(","),
@@ -37,7 +34,16 @@ export default {
           postData.address,
           postData.medias
         );
-        this.$router.replace("/");
+        this.$router.replace(`/post/${this.id}`);
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
+    async getPostDetail() {
+      try {
+        let response = await api.getPostDetail(this.id);
+        this.post = response.data;
+        this.post.tags = this.post.tags ? this.post.tags.split(",") : [];
       } catch (error) {
         console.log(error.response.data);
       }
@@ -47,6 +53,7 @@ export default {
     if (!this.$store.state.username) {
       this.$router.replace("sign-in");
     }
+    this.getPostDetail();
   }
 };
 </script>
