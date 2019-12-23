@@ -51,8 +51,8 @@ export default {
   },
   methods: {
     async uploadImage(item) {
-      let response = await api.uploadImage(item.file)
-      this.imageUrl=response.data.resUri;
+      let response = await api.uploadImage(item.file);
+      this.imageUrl = response.data.resUri;
     },
     async getUserInfo() {
       let response = await api.getUserInfo(this.$store.state.userId);
@@ -65,14 +65,19 @@ export default {
     },
     async editUserInfo() {
       try {
-        await api.editUserInfo(
+        let user = (await api.editUserInfo(
           this.nickname,
           this.phone,
           this.birthDate,
           this.sex,
           this.address,
           this.imageUrl
-        );
+        )).data;
+        this.$store.commit("setUser", {
+          userId: user.userId,
+          username: user.username,
+          userImage: user.imageUrl
+        });
         if (this.firstSign) {
           this.$router.replace("/");
         } else {
