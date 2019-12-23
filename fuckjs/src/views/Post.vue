@@ -80,6 +80,19 @@
         </q-item>
       </q-card>
 
+      <q-dialog v-model="confirmDelete">
+        <q-card style="min-width: 300px">
+          <q-card-section>
+            <div class="text-h6">确认删除？</div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="取消" v-close-popup />
+            <q-btn flat label="删除" color="red" @click="deletePost" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
       <q-card v-if="post.comments.length > 0">
         <q-card-section>
           <div class="text-h6">评论</div>
@@ -173,7 +186,14 @@ export default {
         params: { id: this.post.postId }
       });
     },
-    deletePost() {}
+    async deletePost() {
+      try {
+        await api.deletePost(this.id);
+        this.$router.replace("/");
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    }
   },
   created() {
     this.getPostDetail();
