@@ -52,7 +52,7 @@
         <q-separator />
 
         <q-item
-          v-if="post.user.userId != this.$store.state.userId"
+          v-if="post.user.userId != $store.state.userId"
           :to="{name: 'user', params: {id: post.user.userId}}"
         >
           <q-item-section avatar>
@@ -75,12 +75,12 @@
           </q-item-section>
           <q-card-actions align="right" style="padding:0px">
             <q-btn dense color="primary" @click="editPost" style="width:80px">编辑</q-btn>
-            <q-btn dense color="red" @click="confirmDelete = true">删除</q-btn>
+            <q-btn dense color="red" @click="confirmPostDelete = true">删除</q-btn>
           </q-card-actions>
         </q-item>
       </q-card>
 
-      <q-dialog v-model="confirmDelete">
+      <q-dialog v-model="confirmPostDelete">
         <q-card style="min-width: 300px">
           <q-card-section>
             <div class="text-h6">确认删除？</div>
@@ -99,7 +99,10 @@
         </q-card-section>
         <div v-for="(comment, index) in post.comments" :key="index">
           <q-separator />
-          <q-item :to="{name: 'user', params: {id: comment.user.userId}}">
+          <q-item
+            v-if="comment.user.userId != $store.state.userId"
+            :to="{name: 'user', params: {id: comment.user.userId}}"
+          >
             <q-item-section avatar>
               <q-avatar size="2.2rem">
                 <img :src="comment.user.imageUrl" />
@@ -110,11 +113,38 @@
               <q-item-label caption>{{ comment.upTime }}</q-item-label>
             </q-item-section>
           </q-item>
+          <q-item v-else>
+            <q-item-section avatar>
+              <q-avatar size="2.2rem">
+                <img :src="comment.user.imageUrl" />
+              </q-avatar>
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ comment.user.nickname }}</q-item-label>
+              <q-item-label caption>{{ comment.upTime }}</q-item-label>
+            </q-item-section>
+            <q-card-actions align="right" style="padding:0px">
+              <q-btn dense color="red" @click="prepareToDeleteComment(comment.commentId)">删除</q-btn>
+            </q-card-actions>
+          </q-item>
           <q-card-section>
             <div class="text-subtitle2">{{ comment.content }}</div>
           </q-card-section>
         </div>
       </q-card>
+
+      <q-dialog v-model="confirmCommentDelete">
+        <q-card style="min-width: 300px">
+          <q-card-section>
+            <div class="text-h6">确认删除评论？</div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="取消" v-close-popup />
+            <q-btn flat label="删除" color="red" @click="deleteComment" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
 
       <q-dialog v-model="inputComment">
         <q-card style="min-width: 300px">
@@ -156,7 +186,9 @@ export default {
       fullscreen: false,
       inputComment: false,
       commentString: "",
-      confirmDelete: false
+      confirmPostDelete: false,
+      confirmCommentDelete: false,
+      commentId: ""
     };
   },
   methods: {
@@ -190,6 +222,21 @@ export default {
       try {
         await api.deletePost(this.id);
         this.$router.replace("/");
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
+    prepareToDeleteComment(commentId) {
+      this.commentId = commentId;
+      this.confirmCommentDelete = true;
+    },
+    async deleteComment() {
+      try {
+        if (this.commentId) {
+          await api.deleteComment(this.id, this.commentId);
+          this.getPostDetail();
+        }
+        this.commentId = "";
       } catch (error) {
         console.log(error.response.data);
       }
