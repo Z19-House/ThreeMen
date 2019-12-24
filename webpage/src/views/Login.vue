@@ -20,8 +20,8 @@ import loginWindow from "@/components/Login/LoginWindow.vue";
 
 export default {
   components: {
-    loginHead: loginHead,
-    loginWindow: loginWindow
+    loginHead,
+    loginWindow
   }
 };
 </script>

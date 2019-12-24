@@ -1,12 +1,12 @@
 <template>
   <div class="home">
-    <homeNavigation :username="username" :userImage="userImage" />
+    <homeNavigation/>
     <div class="homehead">
       <homeHead />
     </div>
     <div class="homeBody">
       <keep-alive include="homeCommodity">
-        <router-view :userImage="userImage" />
+        <router-view />
       </keep-alive>
     </div>
   </div>
@@ -20,36 +20,16 @@ import homeNavigation from "@/components/Home/HomeNavigation.vue";
 export default {
   name: "home",
   components: {
-    homeHead: homeHead,
-    homeNavigation: homeNavigation
+    homeHead,
+    homeNavigation
   },
   data() {
-    return {
-      username: "未登录",
-      userImage: ""
-    };
+    return {};
   },
-  mounted: function() {
-    this.LoadUserInformation();
-  },
-
+  
   methods: {
     errorHandler() {
       return true;
-    },
-    LoadUserInformation: function() {
-      console.log("我发送了消息");
-      this.axios({
-        method: "get",
-        url: "user/" + localStorage.getItem("username")
-      })
-        .then(response => {
-          this.username = response.data.username;
-          this.userImage = response.data.imageUrl;
-        })
-        .catch(error => {
-          console.log(error);
-        });
     }
   }
 };

@@ -41,10 +41,8 @@
   </div>
 </template>
 <style>
-
 </style>
 <script>
-
 export default {
   data() {
     var userRe = /^(?![0-9]+$)(?![a-zA-Z]+$)[0-9A-Za-z]{2,16}$/;
@@ -115,8 +113,7 @@ export default {
         data: JSON.stringify({
           username: this.formRegister.username,
           password: this.formRegister.password
-        }),
-
+        })
       })
         .then(response => {
           console.log("response.status");
@@ -137,14 +134,14 @@ export default {
           username: this.formRegister.username,
           password: this.formRegister.password
         })
-
       })
         .then(response => {
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
           localStorage.setItem("username", this.formRegister.username);
-          this.axios.defaults.headers.common['Authorization'] ="Bearer " + localStorage.getItem("accessToken");
-          this.$router.replace({ name: "userInformation"});
+          this.$store.commit('login',{accessToken:response.data.accessToken,username:this.formRegister.username});
+          this.$store.dispatch("userLoad", this.formRegister.username);
+          this.$router.go(0);
         })
         .catch(error => {
           console.log(error);

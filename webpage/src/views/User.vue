@@ -14,17 +14,26 @@
           <span slot="label" class="tabStyle">
             <i class="el-icon-s-home"></i> 用户信息
           </span>
-          <userInformation :username="username" />
+          <el-radio-group v-model="isDisplay">
+            <el-radio-button label="1">用户信息</el-radio-button>
+            <el-radio-button label="0">编辑</el-radio-button>
+          </el-radio-group>
+          <userInformation :username="username" :isDisplay="isDisplay" style="margin-top:10px" />
         </el-tab-pane>
         <el-tab-pane>
           <span slot="label" class="tabStyle">
             <i class="el-icon-star-on"></i> 收藏
-          </span>用户管理
+          </span>
+          <userProduct/>
         </el-tab-pane>
         <el-tab-pane>
           <span slot="label" class="tabStyle">
             <i class="el-icon-circle-plus"></i> 发布
-          </span>用户管理
+          </span>
+          <el-tabs tab-position="left" type="border-card" >
+            <el-tab-pane label="发布"><releaseProduct/></el-tab-pane>
+            <el-tab-pane label="我的发布"><userProduct/></el-tab-pane>
+          </el-tabs>
         </el-tab-pane>
       </el-tabs>
     </div>
@@ -53,23 +62,32 @@
 
 <script>
 import userInformation from "@/components/global/UserInformation.vue";
+import releaseProduct from "@/components/user/ReleaseProduct.vue";
+import userProduct from "@/components/user/userProduct.vue";
+
 export default {
   components: {
-    userInformation: userInformation
+    userInformation,
+    releaseProduct,
+    userProduct
+  },
+  props: {
+    isCurrentUser: {
+      type: Boolean,
+      default: () => false
+    }
   },
   data() {
     return {
       url: require("../assets/logo.png"),
-      disable: true,
+      isDisplay: 1,
       username: this.$route.params.username
     };
   },
   methods: {
     goBack() {
       this.$router.go(-1);
-    },
-  
-  },
-  
+    }
+  }
 };
 </script>

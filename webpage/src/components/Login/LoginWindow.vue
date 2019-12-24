@@ -72,7 +72,9 @@ export default {
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
           localStorage.setItem("username", formName.username);
-          this.axios.defaults.headers.common['Authorization'] ="Bearer " + localStorage.getItem("accessToken"); //添加请求头
+          localStorage.setItem("username", formName.username);
+          this.$store.commit('login',{accessToken:response.data.accessToken,username:formName.username});
+          this.$store.dispatch("userLoad", formName.username);
           this.$router.replace({ path: "/" });
         })
         .catch(error => {

@@ -5,7 +5,8 @@
       <span style="font-size:40px;">注册</span>
     </el-divider>
     <div class="body">
-    <router-view />
+    <registerWindow v-if="!username"/>
+    <userInformation v-else :isDisplay="2" :username="username" />
     </div>
   </div>
 </template>
@@ -20,10 +21,19 @@
 
 <script>
 import registerHead from "@/components/Register/Head.vue";
+import registerWindow from '@/components/Register/RegisterWindow.vue'
+import userInformation from '@/components/global/UserInformation.vue'
 
 export default {
   components: {
-    registerHead: registerHead
+    registerHead,
+    registerWindow,
+    userInformation
+  },
+  computed: {
+    username(){
+      return this.$store.state.username;
+    }
   }
 };
 </script>

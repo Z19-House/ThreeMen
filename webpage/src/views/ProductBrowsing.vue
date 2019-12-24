@@ -52,7 +52,7 @@
                   </el-avatar>
                 </div>
                 <div class="commentInputBox">
-                  <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="userComment"></el-input>
+                  <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="userComment" maxlength="255" show-word-limit></el-input>
                 </div>
                 <div class="commentInputBtn">
                   <el-button
@@ -217,15 +217,18 @@ p {
 
 <script>
 export default {
-  props: {
-    userImage: String
-  },
   data() {
     return {
       userComment: "",
       details: { user: {} },
       type: ["", "success", "warning", "danger", "info"]
     };
+  },
+  computed: {
+
+    userImage() {
+      return this.$store.state.userImage;
+    }
   },
   mounted() {
     this.LoadMerchandise();
@@ -259,6 +262,8 @@ export default {
         })
           .then(response => {
             console.log(response);
+            this.LoadMerchandise() 
+            this.userComment=""
           })
           .catch(error => {
             console.log(error);
