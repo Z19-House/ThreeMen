@@ -83,6 +83,18 @@ class api {
         return axios.get("/post/" + id);
     }
 
+    static getCollectionStatus(id) {
+        return axios.get(`/collection/${id}`);
+    }
+
+    static updateCollectionStatus(id, privacy) {
+        return axios.post(`/collection/${id}?privacy=${privacy}`)
+    }
+
+    static deleteCollection(id) {
+        return axios.delete(`/collection/${id}`);
+    }
+
     static newPost(title, content, tags, status, price, address, medias) {
         return axios.post("/post/new", {
             title,

@@ -80,19 +80,6 @@
         </q-item>
       </q-card>
 
-      <q-dialog v-model="confirmPostDelete">
-        <q-card style="min-width: 300px">
-          <q-card-section>
-            <div class="text-h6">确认删除？</div>
-          </q-card-section>
-
-          <q-card-actions align="right" class="text-primary">
-            <q-btn flat label="取消" v-close-popup />
-            <q-btn flat label="删除" color="red" @click="deletePost" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
-
       <q-card v-if="post.comments.length > 0">
         <q-card-section>
           <div class="text-h6">评论</div>
@@ -133,6 +120,45 @@
         </div>
       </q-card>
 
+      <q-page-sticky position="bottom-right" :offset="[18, 90]">
+        <q-btn
+          fab
+          :icon="collected ? 'star' : 'star_border'"
+          color="accent"
+          @click="confirmCollect = true"
+        />
+      </q-page-sticky>
+      <q-page-sticky position="bottom-right" :offset="[18, 18]">
+        <q-btn fab icon="message" color="accent" @click="inputComment = true" />
+      </q-page-sticky>
+
+      <!-- 修改收藏状态 -->
+      <q-dialog v-model="confirmCollect">
+        <q-card style="min-width: 300px">
+          <q-card-section>
+            <div class="text-h6">修改收藏状态</div>
+          </q-card-section>
+
+          <q-card-section>
+            <q-toggle v-model="privacy" class="full-width">私有</q-toggle>
+          </q-card-section>
+
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="取消" v-close-popup />
+            <q-btn flat :label="collected ? '修改' : '收藏'" @click="collect" v-close-popup />
+            <q-btn
+              v-if="collected"
+              flat
+              label="删除"
+              color="red"
+              @click="deleteCollection"
+              v-close-popup
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+
+      <!-- 确认删除评论 -->
       <q-dialog v-model="confirmCommentDelete">
         <q-card style="min-width: 300px">
           <q-card-section>
@@ -146,6 +172,7 @@
         </q-card>
       </q-dialog>
 
+      <!-- 输入评论 -->
       <q-dialog v-model="inputComment">
         <q-card style="min-width: 300px">
           <q-card-section>
@@ -163,9 +190,6 @@
         </q-card>
       </q-dialog>
     </div>
-    <q-page-sticky position="bottom-right" :offset="[18, 18]">
-      <q-btn fab icon="message" color="accent" @click="inputComment = true" />
-    </q-page-sticky>
   </q-page>
 </template>
 
@@ -188,7 +212,10 @@ export default {
       commentString: "",
       confirmPostDelete: false,
       confirmCommentDelete: false,
-      commentId: ""
+      commentId: "",
+      confirmCollect: false,
+      collected: false,
+      privacy: false
     };
   },
   methods: {
@@ -196,6 +223,37 @@ export default {
       try {
         let response = await api.getPostDetail(this.id);
         this.post = response.data;
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
+    async getPostCollectionStatus() {
+      try {
+        let response = await api.getCollectionStatus(this.id);
+        this.collected = true;
+        this.privacy = response.data.privacy != 0;
+      } catch (error) {
+        if (error.response.status == 404) {
+          this.collected = false;
+          this.privacy = false;
+        } else {
+          console.log(error.response.data);
+        }
+      }
+    },
+    async collect() {
+      try {
+        await api.updateCollectionStatus(this.id, this.privacy ? 1 : 0);
+        this.collected = true;
+      } catch (error) {
+        console.log(error.response.data);
+      }
+    },
+    async deleteCollection() {
+      try {
+        await api.deleteCollection(this.id);
+        this.collected = false;
+        this.privacy = false;
       } catch (error) {
         console.log(error.response.data);
       }
@@ -244,6 +302,7 @@ export default {
   },
   created() {
     this.getPostDetail();
+    this.getPostCollectionStatus();
   }
 };
 </script>
