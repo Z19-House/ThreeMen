@@ -50,6 +50,9 @@
               <q-item clickable to="/edit-user">
                 <q-item-section>信息编辑</q-item-section>
               </q-item>
+              <q-item clickable to="/change-password">
+                <q-item-section>修改密码</q-item-section>
+              </q-item>
               <q-separator />
               <q-item clickable @click="signOut">
                 <q-item-section>注销</q-item-section>
