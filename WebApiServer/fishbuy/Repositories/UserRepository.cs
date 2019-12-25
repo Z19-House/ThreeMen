@@ -90,6 +90,7 @@ namespace fishbuy.Repositories
                 .Select(it => it.Post)
                 .Include(it => it.User)
                 .Include(it => it.MediaLink)
+                .Include(it => it.Collection)
                 .OrderByDescending(it => it.UpTime)
                 .Skip(skip)
                 .Take(take)

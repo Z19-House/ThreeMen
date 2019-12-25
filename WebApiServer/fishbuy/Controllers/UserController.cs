@@ -161,7 +161,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("{username}/collection")]
-        public async Task<ActionResult<ListResult<List<PostMedium>>>> GetUserColection(DateTime beforeDateTime, string username, int skip = 0, int take = 20)
+        public async Task<ActionResult<ListResult<List<PostMediumWithCollectionStatus>>>> GetUserColection(DateTime beforeDateTime, string username, int skip = 0, int take = 20)
         {
             _logger.LogInformation(nameof(GetUserColection) + ": " + username);
 
@@ -182,13 +182,13 @@ namespace fishbuy.Controllers
             {
                 return NotFound();
             }
-            var list = new List<PostMedium>();
+            var list = new List<PostMediumWithCollectionStatus>();
             foreach (var item in collectPosts)
             {
-                list.Add(PostMedium.FromPost(item, _imageServer));
+                list.Add(PostMediumWithCollectionStatus.FromPost(item, _imageServer));
             }
 
-            return new ListResult<List<PostMedium>>
+            return new ListResult<List<PostMediumWithCollectionStatus>>
             {
                 Data = list,
                 Count = await _repo.GetUserCollectionCount(username, isAuthorized, beforeDateTime)

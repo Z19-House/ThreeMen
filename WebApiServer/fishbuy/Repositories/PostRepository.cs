@@ -159,7 +159,8 @@ namespace fishbuy.Repositories
                 Content = content
             });
             await _context.SaveChangesAsync();
-            return item.Entity;
+            return await _context.Comment.Include(it => it.User)
+                .FirstOrDefaultAsync(it => it.CommentId == item.Entity.CommentId);
         }
     }
 }
