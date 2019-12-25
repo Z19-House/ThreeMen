@@ -52,7 +52,14 @@
                   </el-avatar>
                 </div>
                 <div class="commentInputBox">
-                  <el-input type="textarea" :rows="2" placeholder="请输入内容" v-model="userComment" maxlength="255" show-word-limit></el-input>
+                  <el-input
+                    type="textarea"
+                    :rows="2"
+                    placeholder="请输入内容"
+                    v-model="userComment"
+                    maxlength="255"
+                    show-word-limit
+                  ></el-input>
                 </div>
                 <div class="commentInputBtn">
                   <el-button
@@ -217,29 +224,39 @@ p {
 
 <script>
 export default {
+  name: "productBrowsing",
   data() {
     return {
       userComment: "",
       details: { user: {} },
-      type: ["", "success", "warning", "danger", "info"]
+      type: ["", "success", "warning", "danger", "info"],
     };
   },
   computed: {
-
     userImage() {
       return this.$store.state.userImage;
+    },
+    postId(){
+      console.log("1111111111")
+      this.LoadMerchandise(this.$store.state.postId)
+      return this.$store.state.postId;
+    }
+  },
+  watch:{
+     postId(){
+    //   console.log(newData)
+    //  this.LoadMerchandise(newData);
     }
   },
   mounted() {
-    this.LoadMerchandise();
+   // this.LoadMerchandise();
   },
   methods: {
-    LoadMerchandise() {
+    LoadMerchandise(postId) {
       console.log(this.userImage);
       this.axios({
         method: "get",
-        url: "post/" + this.$route.params.postId,
-
+        url: "post/" + postId
       })
         .then(response => {
           console.log(response);
@@ -253,17 +270,13 @@ export default {
       if (localStorage.getItem("accessToken")) {
         this.axios({
           method: "post",
-          url:
-            "post/" +
-            this.details.postId +
-            "/comment/new",
-          data: JSON.stringify(this.userComment),
-
+          url: "post/" + this.details.postId + "/comment/new",
+          data: JSON.stringify(this.userComment)
         })
           .then(response => {
             console.log(response);
-            this.LoadMerchandise() 
-            this.userComment=""
+            this.LoadMerchandise();
+            this.userComment = "";
           })
           .catch(error => {
             console.log(error);

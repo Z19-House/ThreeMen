@@ -8,6 +8,7 @@ import Register from '../views/Register.vue'
 import homeCommodity from "../views/HomeCommodity.vue";
 import productBrowsing from "../views/ProductBrowsing.vue";
 import user from "../views/User.vue"
+import store from '@/store/index';
 
 
 Vue.use(VueRouter)
@@ -32,13 +33,18 @@ const routes = [
         path: '/productBrowsing/:postId',
         name: 'productBrowsing',
         component: productBrowsing,
+        beforeEnter: (to, from, next) => {
+          console.log("1111",to.params.postId)
+          store.commit("setPostId",to.params.postId);
+          next(true);
 
+        }
       }
     ]
   },
   {
     path: '/register',
-    name:'register',
+    name: 'register',
     component: Register,
     // children: [
     //   {
@@ -66,10 +72,10 @@ const routes = [
         next(true);
       } else {
         next('/login');
-          
-        }
+
       }
-    
+    }
+
   }
 
 ]

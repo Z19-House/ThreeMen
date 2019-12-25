@@ -6,7 +6,7 @@
       </h1>
     </div>
     <div>
-      <ul>
+      <ul class="shopDataList">
           <router-link
             v-for="(shopData,index) in objectArray"
             :key="index"
@@ -147,6 +147,12 @@ export default {
 }
 li{
 list-style: none;
-
+}
+.shopDataList::after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
 }
 </style>

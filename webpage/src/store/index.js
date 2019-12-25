@@ -8,7 +8,8 @@ export default new Vuex.Store({
   state: {
     token: "Bearer " + localStorage.getItem("accessToken"),
     username: localStorage.getItem("username"),
-    userImage: localStorage.getItem("userImage")
+    userImage: localStorage.getItem("userImage"),
+    postId: ""
   },
   mutations: {
     login(state, {accessToken, username}) {
@@ -23,6 +24,10 @@ export default new Vuex.Store({
       state.token = "Bearer " + localStorage.getItem("accessToken");
       state.username = localStorage.getItem("username");
       state.userImage = localStorage.getItem("userImage");
+    },
+    setPostId(state,postId){
+      console.log("wo ti joa le")
+      state.postId=postId;
     }
   },
   actions: {

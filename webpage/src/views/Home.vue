@@ -5,7 +5,7 @@
       <homeHead />
     </div>
     <div class="homeBody">
-      <keep-alive include="homeCommodity">
+      <keep-alive exclude="productBrowsing">
         <router-view />
       </keep-alive>
     </div>

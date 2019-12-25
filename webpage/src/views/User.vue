@@ -24,15 +24,19 @@
           <span slot="label" class="tabStyle">
             <i class="el-icon-star-on"></i> 收藏
           </span>
-          <userProduct/>
+          <userProduct :title="'我的收藏'" :username="username" :pagerCount="10" :Category="'collection'" />
         </el-tab-pane>
         <el-tab-pane>
           <span slot="label" class="tabStyle">
             <i class="el-icon-circle-plus"></i> 发布
           </span>
-          <el-tabs tab-position="left" type="border-card" >
-            <el-tab-pane label="发布"><releaseProduct/></el-tab-pane>
-            <el-tab-pane label="我的发布"><userProduct/></el-tab-pane>
+          <el-tabs tab-position="left" type="border-card" value="second">
+            <el-tab-pane label="发布" name="first">
+              <releaseProduct />
+            </el-tab-pane>
+            <el-tab-pane label="我的发布" name="second">
+              <userProduct :username="username" :pagerCount="10" />
+            </el-tab-pane>
           </el-tabs>
         </el-tab-pane>
       </el-tabs>
@@ -56,8 +60,7 @@
 .head .el-page-header .el-page-header__title {
   align-self: center;
 }
-.head .el-page-header__content .pageHeadRight {
-}
+
 </style>
 
 <script>
@@ -81,7 +84,7 @@ export default {
     return {
       url: require("../assets/logo.png"),
       isDisplay: 1,
-      username: this.$route.params.username
+      username: this.$route.params.username,
     };
   },
   methods: {

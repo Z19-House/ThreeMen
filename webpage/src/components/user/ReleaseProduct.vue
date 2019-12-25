@@ -54,10 +54,7 @@
 </template>
 
 <style>
-.releaseProduct {
-}
-.releaseProduct .body {
-}
+
 .a {
   margin: 0 auto;
   width: 500px;
