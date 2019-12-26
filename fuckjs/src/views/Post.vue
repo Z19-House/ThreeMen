@@ -133,6 +133,19 @@
         <q-btn fab icon="message" color="accent" @click="inputComment = true" />
       </q-page-sticky>
 
+      <!-- 删除商品 -->
+      <q-dialog v-model="confirmPostDelete">
+        <q-card style="min-width: 300px">
+          <q-card-section>
+            <div class="text-h6">确认删除？</div>
+          </q-card-section>
+
+          <q-card-actions align="right" class="text-primary">
+            <q-btn flat label="取消" v-close-popup />
+            <q-btn flat label="删除" color="red" @click="deletePost" v-close-popup />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
       <!-- 修改收藏状态 -->
       <q-dialog v-model="confirmCollect">
         <q-card style="min-width: 300px">
