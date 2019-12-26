@@ -20,22 +20,14 @@
     <q-card-section>
       <div @click="onCardClick" class="text-subtitle2 text-red">￥{{ post.price }}</div>
       <div @click="onCardClick" class="text-subtitle2">{{ post.content }}</div>
-      <div v-if="post.tags.length != 0">
-        <q-chip
-          v-for="(tag, index) in tags"
-          :key="index"
-          clickable
-          @click="onTagClick(tag)"
-          dense
-        >#{{ tag }}</q-chip>
-      </div>
+      <TagsComponent :tags="post.tags" />
     </q-card-section>
 
     <q-separator />
 
     <q-item :to="{name: 'user', params: {id: post.userId}}">
       <q-item-section avatar>
-        <q-avatar size="2.2rem" >
+        <q-avatar size="2.2rem">
           <q-img :src="post.userImageUrl" />
         </q-avatar>
       </q-item-section>
@@ -44,32 +36,27 @@
         <q-item-label>{{ post.userNickname }}</q-item-label>
         <q-item-label caption>{{ post.address }}</q-item-label>
       </q-item-section>
+      <q-icon v-if="post.isPrivacy" size="md" name="lock" />
     </q-item>
   </q-card>
 </template>
 
 <script>
 // @ is an alias to /src
+import TagsComponent from "@/components/TagsComponent.vue";
 
 export default {
   name: "PostComponent",
-  components: {},
+  components: {
+    TagsComponent
+  },
   props: {
     post: Object
   },
   data() {
-    return {
-      tags: this.post.tags.split(",")
-    };
+    return {};
   },
   methods: {
-    onTagClick(tag) {
-      console.log(this.tags);
-      this.$router.push({
-        name: "search",
-        query: { type: "tag", keyword: tag }
-      });
-    },
     onCardClick() {
       this.$router.push({ name: "post", params: { id: this.post.postId } });
     }

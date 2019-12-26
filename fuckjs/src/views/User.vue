@@ -65,6 +65,11 @@ export default {
       contentHeight: { height: "" }
     };
   },
+  watch: {
+    id() {
+      this.getUserInfo();
+    }
+  },
   methods: {
     getUrl() {
       return "/user/" + this.id + "/" + this.tab;

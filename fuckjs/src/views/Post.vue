@@ -41,12 +41,13 @@
         <q-card-section>
           <div class="text-h5 text-red">￥{{ post.price }}</div>
           <div class="text-h6">{{ post.title }}</div>
+          <TagsComponent :tags="post.tags" />
         </q-card-section>
 
         <q-separator />
 
         <q-card-section>
-          <div class="text-subtitle2">{{ post.content }}</div>
+          <pre class="text-subtitle2">{{ post.content }}</pre>
         </q-card-section>
 
         <q-separator />
@@ -196,13 +197,16 @@
 <script>
 // @ is an alias to /src
 import api from "@/api";
+import TagsComponent from "@/components/TagsComponent.vue";
 
 export default {
   name: "post",
   props: {
     id: [String, Number]
   },
-  components: {},
+  components: {
+    TagsComponent
+  },
   data() {
     return {
       post: null,

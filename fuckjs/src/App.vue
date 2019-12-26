@@ -2,10 +2,12 @@
   <q-layout view="hHh lpR fff">
     <q-header reveal elevated class="bg-primary text-white">
       <q-toolbar>
-        <q-toolbar-title>
-          <q-avatar>
-            <img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg" />
-          </q-avatar>Fishbuy
+        <q-toolbar-title style="min-width:100px">
+          <router-link to="/">
+            <q-avatar>
+              <q-img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg" />
+            </q-avatar>
+          </router-link> 摸鱼
         </q-toolbar-title>
 
         <q-input
@@ -27,8 +29,8 @@
 
         <q-btn round>
           <q-avatar size="42px">
-            <img v-if="userImage" :src="userImage" />
-            <img v-else src="http://118.25.64.161/images/efd0fc7d20532fdaf769a25683617711.png" />
+            <q-img v-if="userImage" :src="userImage" />
+            <q-img v-else src="http://118.25.64.161/images/efd0fc7d20532fdaf769a25683617711.png" />
           </q-avatar>
           <q-menu auto-close>
             <q-list v-if="!userId" style="min-width: 100px">

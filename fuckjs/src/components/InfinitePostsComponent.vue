@@ -39,18 +39,27 @@ export default {
       datetime: new Date().toUTCString()
     };
   },
+  watch: {
+    async url() {
+      this.resetLimit();
+      await this.loadMoreData();
+    }
+  },
   methods: {
     async onLoad(index, done) {
       done(await this.loadMoreData());
     },
     async refresh(done) {
-      this.datetime = new Date().toUTCString();
-      this.skip = 0;
-      this.items = [];
+      this.resetLimit();
       await this.loadMoreData();
       this.$refs.infiniteScroll.resume();
       this.$refs.infiniteScroll.poll();
       done();
+    },
+    resetLimit() {
+      this.datetime = new Date().toUTCString();
+      this.skip = 0;
+      this.items = [];
     },
     async loadMoreData() {
       try {
