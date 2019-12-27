@@ -40,7 +40,8 @@ export default {
         this.$store.commit("setUser", {
           userId: user.userId,
           username: user.username,
-          userImage: user.imageUrl
+          userImage: user.imageUrl,
+          userGroup: user.userGroup
         });
         this.$router.replace("/");
       } catch (error) {

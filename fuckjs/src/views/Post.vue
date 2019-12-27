@@ -52,31 +52,31 @@
 
         <q-separator />
 
-        <q-item
-          v-if="post.user.userId != $store.state.userId"
-          :to="{name: 'user', params: {id: post.user.userId}}"
-        >
+        <q-item>
           <q-item-section avatar>
-            <q-avatar size="2.2rem">
-              <img :src="post.user.imageUrl" />
-            </q-avatar>
-          </q-item-section>
-          <q-item-section>
-            <q-item-label>{{ post.user.nickname }}</q-item-label>
-          </q-item-section>
-        </q-item>
-        <q-item v-else>
-          <q-item-section avatar>
-            <q-avatar size="2.2rem">
-              <img :src="post.user.imageUrl" />
-            </q-avatar>
+            <router-link :to="{name: 'user', params: {id: post.user.userId}}">
+              <q-avatar size="2.2rem">
+                <img :src="post.user.imageUrl" />
+              </q-avatar>
+            </router-link>
           </q-item-section>
           <q-item-section>
             <q-item-label>{{ post.user.nickname }}</q-item-label>
           </q-item-section>
           <q-card-actions align="right" style="padding:0px">
-            <q-btn dense color="primary" @click="editPost" style="width:80px">编辑</q-btn>
-            <q-btn dense color="red" @click="confirmPostDelete = true">删除</q-btn>
+            <q-btn
+              v-if="post.user.userId == $store.state.userId"
+              dense
+              color="primary"
+              @click="editPost"
+              style="width:80px"
+            >编辑</q-btn>
+            <q-btn
+              v-if="post.user.userId == $store.state.userId || $store.state.userGroup == 1"
+              dense
+              color="red"
+              @click="confirmPostDelete = true"
+            >删除</q-btn>
           </q-card-actions>
         </q-item>
       </q-card>
@@ -87,31 +87,23 @@
         </q-card-section>
         <div v-for="(comment, index) in post.comments" :key="index">
           <q-separator />
-          <q-item
-            v-if="comment.user.userId != $store.state.userId"
-            :to="{name: 'user', params: {id: comment.user.userId}}"
-          >
+          <q-item>
             <q-item-section avatar>
-              <q-avatar size="2.2rem">
-                <img :src="comment.user.imageUrl" />
-              </q-avatar>
+              <router-link :to="{name: 'user', params: {id: comment.user.userId}}">
+                <q-avatar size="2.2rem">
+                  <img :src="comment.user.imageUrl" />
+                </q-avatar>
+              </router-link>
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ comment.user.nickname }}</q-item-label>
               <q-item-label caption>{{ comment.upTime }}</q-item-label>
             </q-item-section>
-          </q-item>
-          <q-item v-else>
-            <q-item-section avatar>
-              <q-avatar size="2.2rem">
-                <img :src="comment.user.imageUrl" />
-              </q-avatar>
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ comment.user.nickname }}</q-item-label>
-              <q-item-label caption>{{ comment.upTime }}</q-item-label>
-            </q-item-section>
-            <q-card-actions align="right" style="padding:0px">
+            <q-card-actions
+              v-if="comment.user.userId == $store.state.userId || $store.state.userGroup == 1"
+              align="right"
+              style="padding:0px"
+            >
               <q-btn dense color="red" @click="prepareToDeleteComment(comment.commentId)">删除</q-btn>
             </q-card-actions>
           </q-item>

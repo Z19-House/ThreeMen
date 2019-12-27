@@ -109,6 +109,15 @@ export default {
         query: { type: "title", keyword: this.text }
       });
     }
+  },
+  async created() {
+    let user = (await api.getUserInfo(this.username)).data;
+    this.$store.commit("setUser", {
+      userId: user.userId,
+      username: user.username,
+      userImage: user.imageUrl,
+      userGroup: user.userGroup
+    });
   }
 };
 </script>
