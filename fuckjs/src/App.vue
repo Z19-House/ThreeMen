@@ -7,7 +7,7 @@
             <q-avatar>
               <q-img src="https://cdn.quasar.dev/logo/svg/quasar-logo.svg" />
             </q-avatar>
-          </router-link> 摸鱼
+          </router-link>&nbsp;摸鱼
         </q-toolbar-title>
 
         <q-input
@@ -66,10 +66,11 @@
     </q-header>
 
     <q-page-container>
-      <keep-alive include="home,user">
+      <keep-alive include="home,user,search">
         <router-view />
       </keep-alive>
     </q-page-container>
+    <q-ajax-bar position="top" color="accent" size="5px" />
   </q-layout>
 </template>
 
@@ -106,7 +107,7 @@ export default {
     search() {
       this.$router.push({
         name: "search",
-        query: { type: "title", keyword: this.text }
+        query: { type: "posts", keyword: this.text }
       });
     }
   },

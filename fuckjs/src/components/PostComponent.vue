@@ -11,15 +11,15 @@
       <template v-slot:error>
         <div class="absolute-full flex flex-center bg-negative text-white">Cannot load image</div>
       </template>
-      <div class="absolute-bottom text-h6">{{ post.title }}</div>
+      <div class="absolute-bottom text-h6 my-text">{{ post.title }}</div>
     </q-img>
     <q-card-section v-else @click="onCardClick">
-      <div class="text-h6">{{ post.title }}</div>
+      <div class="text-h6 my-text">{{ post.title }}</div>
     </q-card-section>
 
     <q-card-section>
       <div @click="onCardClick" class="text-subtitle2 text-red">￥{{ post.price }}</div>
-      <div @click="onCardClick" class="text-subtitle2">{{ post.content }}</div>
+      <div @click="onCardClick" class="text-subtitle2 my-text">{{ post.content }}</div>
       <TagsComponent :tags="post.tags" />
     </q-card-section>
 
@@ -63,3 +63,10 @@ export default {
   }
 };
 </script>
+<style scoped>
+.my-text {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+</style>

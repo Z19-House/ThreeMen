@@ -25,7 +25,7 @@ export default {
     onTagClick(tag) {
       this.$router.push({
         name: "search",
-        query: { type: "tag", keyword: tag }
+        query: { type: "tags", keyword: tag }
       });
     }
   }

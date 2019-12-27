@@ -1,46 +1,45 @@
 <template>
-  <q-card v-if="user">
-    <q-item>
-      <q-item-section avatar>
-        <q-avatar size="8rem">
-          <q-img :src="user.imageUrl" />
-        </q-avatar>
-      </q-item-section>
+  <div v-if="user">
+    <div style="position:sticky;top:0px;z-index:3000;background-color:white;">
+      <q-item>
+        <q-item-section avatar>
+          <q-avatar size="68px">
+            <q-img :src="user.imageUrl" />
+          </q-avatar>
+        </q-item-section>
 
-      <q-item-section>
-        <q-item-label class="text-h6">{{ user.nickname }}</q-item-label>
-        <q-item-label caption>@{{ user.username }}</q-item-label>
-        <q-item-label class="text-subtitle2">手机：{{ user.phone }}</q-item-label>
-        <q-item-label class="text-subtitle2">生日：{{ user.birthDate }}</q-item-label>
-        <q-item-label class="text-subtitle2">性别：{{ user.sex }}</q-item-label>
-        <q-item-label class="text-subtitle2">地址：{{ user.address }}</q-item-label>
-      </q-item-section>
-    </q-item>
+        <q-item-section>
+          <q-item-label class="text-h6">
+            {{ user.nickname }}
+            <span class="text-subtitle2" style="color:gray">@{{ user.username }}</span>
+          </q-item-label>
+          <q-item-label class="text-subtitle2">手机：{{ user.phone }}</q-item-label>
+          <q-item-label class="text-subtitle2">生日：{{ user.birthDate }}</q-item-label>
+        </q-item-section>
+        <q-item-section>
+          <q-item-label style="height:26px"></q-item-label>
+          <q-item-label class="text-subtitle2">性别：{{ user.sex }}</q-item-label>
+          <q-item-label class="text-subtitle2">地址：{{ user.address }}</q-item-label>
+        </q-item-section>
+      </q-item>
 
-    <q-tabs
-      v-model="tab"
-      dense
-      class="text-grey"
-      active-color="primary"
-      indicator-color="primary"
-      align="justify"
-      narrow-indicator
-    >
-      <q-tab name="posts" label="商品" />
-      <q-tab name="collection" label="收藏" />
-    </q-tabs>
+      <q-tabs
+        v-model="tab"
+        dense
+        class="text-grey"
+        active-color="primary"
+        indicator-color="primary"
+        align="justify"
+      >
+        <q-tab name="posts" label="商品" />
+        <q-tab name="collection" label="收藏" />
+      </q-tabs>
 
-    <q-separator />
+      <q-separator />
+    </div>
 
-    <q-tab-panels v-model="tab" ref="tabPanels" animated :style="contentHeight">
-      <q-tab-panel name="posts">
-        <InfinitePostsComponent :url="getUrl()"></InfinitePostsComponent>
-      </q-tab-panel>
-      <q-tab-panel name="collection">
-        <InfinitePostsComponent :url="getUrl()"></InfinitePostsComponent>
-      </q-tab-panel>
-    </q-tab-panels>
-  </q-card>
+    <InfinitePostsComponent :url="getUrl()"></InfinitePostsComponent>
+  </div>
 </template>
 
 <script>
@@ -61,8 +60,7 @@ export default {
   data() {
     return {
       tab: "posts",
-      user: {},
-      contentHeight: { height: "" }
+      user: {}
     };
   },
   watch: {
@@ -73,17 +71,6 @@ export default {
   methods: {
     getUrl() {
       return "/user/" + this.id + "/" + this.tab;
-    },
-    setScrollHeight() {
-      if (this.$refs.tabPanels) {
-        setTimeout(() => {
-          this.contentHeight.height =
-            document.documentElement.clientHeight -
-            this.$refs.tabPanels.$el.offsetTop -
-            50 +
-            "px";
-        }, 60);
-      }
     },
     async getUserInfo() {
       try {
@@ -96,13 +83,6 @@ export default {
   },
   created() {
     this.getUserInfo();
-    window.addEventListener("resize", this.setScrollHeight);
-  },
-  mounted() {
-    this.setScrollHeight();
-  },
-  destroyed() {
-    window.removeEventListener("resize", this.setScrollHeight);
   }
 };
 </script>

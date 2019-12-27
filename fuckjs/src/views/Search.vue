@@ -1,18 +1,62 @@
 <template>
-  <q-page class="flex flex-center">Search {{ type }} {{ keyword }}</q-page>
+  <div>
+    <div style="position:sticky;top:0px;z-index:3000;background-color:white;">
+      <q-input
+        dense
+        standout
+        outlined
+        v-model="keyword"
+        v-on:keyup.enter="search"
+        class="q-ml-md"
+        style="margin:0rem;padding:1rem"
+      >
+        <template v-slot:append>
+          <q-icon v-if="keyword === ''" name="search" />
+          <q-icon v-else name="clear" class="cursor-pointer" @click="keyword = ''" />
+        </template>
+      </q-input>
+
+      <q-tabs
+        v-model="tab"
+        dense
+        class="text-grey"
+        active-color="primary"
+        indicator-color="primary"
+        align="justify"
+      >
+        <q-tab name="posts" label="商品" />
+        <q-tab name="tags" label="标签" />
+        <q-tab name="user" label="用户" />
+      </q-tabs>
+      <q-separator />
+    </div>
+
+    <InfinitePostsComponent v-if="tab=='posts' || tab=='tags'" :url="getUrl()"></InfinitePostsComponent>
+    <InfiniteUsersComponent v-else :url="getUrl()"></InfiniteUsersComponent>
+  </div>
 </template>
 
 <script>
 // @ is an alias to /src
+import InfinitePostsComponent from "@/components/InfinitePostsComponent.vue";
+import InfiniteUsersComponent from "@/components/InfiniteUsersComponent.vue";
 
 export default {
-  name: "user",
+  name: "search",
+  components: {
+    InfinitePostsComponent,
+    InfiniteUsersComponent
+  },
   data() {
     return {
-      type: this.$route.query.type,
+      tab: this.$route.query.type,
       keyword: this.$route.query.keyword
     };
   },
-  components: {}
+  methods: {
+    getUrl() {
+      return "/search/" + this.tab + "/" + this.keyword;
+    }
+  }
 };
 </script>
