@@ -288,7 +288,7 @@ export default {
     async deletePost() {
       try {
         await api.deletePost(this.id);
-        this.$router.replace("/");
+        this.$router.replace({name: "home", params: {reloadDate: new Date()}});
       } catch (error) {
         console.log(error.response.data);
       }

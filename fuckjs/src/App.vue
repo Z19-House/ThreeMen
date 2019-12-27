@@ -66,7 +66,7 @@
     </q-header>
 
     <q-page-container>
-      <keep-alive include="home">
+      <keep-alive include="home,user">
         <router-view />
       </keep-alive>
     </q-page-container>

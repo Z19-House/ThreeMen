@@ -1,6 +1,6 @@
 <template>
   <div>
-    <InfinitePostsComponent url="/post"></InfinitePostsComponent>
+    <InfinitePostsComponent :url="url"></InfinitePostsComponent>
     <q-page-sticky position="bottom-right" :offset="[18, 18]">
       <q-btn fab icon="add" color="accent" to="/new-post" />
     </q-page-sticky>
@@ -21,8 +21,18 @@ export default {
   components: {
     InfinitePostsComponent
   },
+  props: {
+    reloadDate: Date
+  },
+  watch: {
+    reloadDate() {
+      this.url = `/post#${this.reloadDate}`;
+    }
+  },
   data() {
-    return {};
+    return {
+      url: "/post"
+    };
   },
   methods: {}
 };
