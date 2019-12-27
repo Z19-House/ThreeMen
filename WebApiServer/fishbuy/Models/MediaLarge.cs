@@ -8,22 +8,12 @@ using System.Threading.Tasks;
 
 namespace fishbuy.Models
 {
-    public class MediaLarge
+    public class MediaLarge : MediaSmall
     {
         /// <summary>
         /// 资源 Hash
         /// </summary>
         public string Hash { get; set; }
-
-        /// <summary>
-        /// 资源类型
-        /// </summary>
-        public ResType ResType { get; set; }
-
-        /// <summary>
-        /// 资源链接
-        /// </summary>
-        public string ResUri { get; set; }
 
         /// <summary>
         /// 资源上传时间

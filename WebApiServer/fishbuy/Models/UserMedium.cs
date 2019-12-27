@@ -39,6 +39,13 @@ namespace fishbuy.Models
         /// </summary>
         public string ImageUrl { get; set; }
 
+        /// <summary>
+        /// 用户组
+        /// 1 - 管理员
+        /// 9 - 用户
+        /// </summary>
+        public int UserGroup { get; set; }
+
         public static UserMedium FromUser(User user, string imageServer)
         {
             if (user == null)
@@ -51,7 +58,8 @@ namespace fishbuy.Models
                 Username = user.Username,
                 Nickname = user.Nickname,
                 Phone = user.Phone,
-                ImageUrl = user.ImageUrl.AddServerAddress(imageServer)
+                ImageUrl = user.ImageUrl.AddServerAddress(imageServer),
+                UserGroup = user.UserGroup
             };
         }
     }

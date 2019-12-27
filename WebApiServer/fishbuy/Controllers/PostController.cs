@@ -105,7 +105,8 @@ namespace fishbuy.Controllers
         /// <param name="post"></param>
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPut("{postId}")]
         public async Task<ActionResult<PostLarge>> EditPost(int postId, [FromBody] PostForUpload post)
@@ -122,7 +123,7 @@ namespace fishbuy.Controllers
             }
             if (item.UserId != uid)
             {
-                return Unauthorized();
+                return Forbid();
             }
             return PostLarge.FromPost(await _repo.UpdatePost(postId, post), _imageServer);
         }
@@ -132,24 +133,38 @@ namespace fishbuy.Controllers
         /// </summary>
         /// <param name="postId"></param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{postId}")]
         public async Task<ActionResult<PostLarge>> DeletePost(int postId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(userId, out int uid))
+            var userGroup = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (userGroup == "1")
             {
-                return BadRequest(new { error = "Unknow user ID." });
+                var item = await _repo.GetPost(postId);
+                if (item == null)
+                {
+                    return NotFound();
+                }
             }
-            var item = await _repo.GetPost(postId);
-            if (item == null)
+            else
             {
-                return NotFound();
-            }
-            if (item.UserId != uid)
-            {
-                return Unauthorized();
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!int.TryParse(userId, out int uid))
+                {
+                    return BadRequest(new { error = "Unknow user ID." });
+                }
+                var item = await _repo.GetPost(postId);
+                if (item == null)
+                {
+                    return NotFound();
+                }
+                if (item.UserId != uid)
+                {
+                    return Forbid();
+                }
             }
             return PostLarge.FromPost(await _repo.DeletePost(postId), _imageServer);
         }
@@ -176,28 +191,54 @@ namespace fishbuy.Controllers
         /// <summary>
         /// 删除评论
         /// </summary>
+        /// <param name="postId"></param>
         /// <param name="commentId"></param>
         /// <returns></returns>
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status403Forbidden)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpDelete("{postId}/comment/{commentId}")]
-        public async Task<ActionResult<CommentLarge>> DeleteComment(string commentId)
+        public async Task<ActionResult<CommentLarge>> DeleteComment(int postId, string commentId)
         {
-            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(userId, out int uid))
+            var userGroup = User.FindFirst(ClaimTypes.Role)?.Value;
+            if (userGroup == "1")
             {
-                return BadRequest(new { error = "Unknow user ID." });
+                var item = await _repo.GetPost(postId);
+                if (item == null)
+                {
+                    return NotFound();
+                }
+                var comment = item.Comment.FirstOrDefault(it => it.CommentId == commentId);
+                if (comment == null)
+                {
+                    return NotFound();
+                }
             }
-            var comment = await _repo.DeleteComment(commentId);
-            if (comment == null)
+            else
             {
-                return NotFound();
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                if (!int.TryParse(userId, out int uid))
+                {
+                    return BadRequest(new { error = "Unknow user ID." });
+                }
+                var item = await _repo.GetPost(postId);
+                if (item == null)
+                {
+                    return NotFound();
+                }
+                var comment = item.Comment.FirstOrDefault(it => it.CommentId == commentId);
+                if (comment == null)
+                {
+                    return NotFound();
+                }
+                if (comment.UserId != uid && item.UserId != uid)
+                {
+                    return Forbid();
+                }
             }
-            if (comment.UserId != uid)
-            {
-                return Unauthorized();
-            }
-            return CommentLarge.FromComment(comment, _imageServer);
+
+            return CommentLarge.FromComment(await _repo.DeleteComment(commentId), _imageServer);
         }
 
 

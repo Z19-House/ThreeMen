@@ -22,6 +22,7 @@ namespace fishbuy.Data
         public string Sex { get; set; }
         public string Address { get; set; }
         public string ImageUrl { get; set; }
+        public int UserGroup { get; set; }
 
         public virtual ICollection<Collection> Collection { get; set; }
         public virtual ICollection<Comment> Comment { get; set; }

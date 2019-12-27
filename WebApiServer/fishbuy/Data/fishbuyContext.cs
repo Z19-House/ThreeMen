@@ -300,6 +300,11 @@ namespace fishbuy.Data
                     .HasMaxLength(4)
                     .IsUnicode(false);
 
+                entity.Property(e => e.UserGroup)
+                    .HasColumnName("USER_GROUP")
+                    .HasColumnType("int(11)")
+                    .HasDefaultValue(9);
+
                 entity.Property(e => e.Username)
                     .IsRequired()
                     .HasColumnName("USERNAME")

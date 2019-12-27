@@ -47,7 +47,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status401Unauthorized)]
         [HttpPost("signin")]
-        public async Task<ActionResult<AccessTokenDto>> SignIn([FromBody] UserSmall user)
+        public async Task<ActionResult<Token>> SignIn([FromBody] UserSmall user)
         {
             _logger.LogInformation(nameof(SignIn) + ": " + user);
             var userFromRepo = await _repo.SignIn(user);
@@ -59,14 +59,17 @@ namespace fishbuy.Controllers
             var refreshToken = _service.GenerateRefreshToken();
             await _repo.SaveRefreshToken(userFromRepo.UserId, refreshToken);
 
-            return new AccessTokenDto
+            return new Token
             {
-                AccessToken = _service.GenerateToken(new Claim[] {
+                AccessToken = _service.GenerateToken(new Claim[]
+                {
                     new Claim(ClaimTypes.NameIdentifier, userFromRepo.UserId.ToString()),
-                    new Claim(ClaimTypes.Name, userFromRepo.Username)
+                    new Claim(ClaimTypes.Name, userFromRepo.Username),
+                    new Claim(ClaimTypes.Role, userFromRepo.UserGroup.ToString()),
                 }),
                 Expires = DateTime.UtcNow.AddDays(7).ToString(),
-                RefreshToken = refreshToken
+                RefreshToken = refreshToken,
+                UserId = userFromRepo.UserId
             };
         }
 
@@ -132,7 +135,7 @@ namespace fishbuy.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("refresh-token")]
-        public async Task<ActionResult<AccessTokenDto>> RefreshToken([FromBody] AccessTokenDto accessTokenDto)
+        public async Task<ActionResult<Token>> RefreshToken([FromBody] Token accessTokenDto)
         {
             var principal = _service.GetPrincipalFromExpiredToken(accessTokenDto.AccessToken);
             var userId = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
@@ -151,11 +154,12 @@ namespace fishbuy.Controllers
             await _repo.DeleteRefreshToken(uid, savedRefreshToken);
             await _repo.SaveRefreshToken(uid, newRefreshToken);
 
-            return new AccessTokenDto
+            return new Token
             {
                 AccessToken = newAccessToken,
                 Expires = DateTime.UtcNow.AddDays(7).ToString(),
-                RefreshToken = newRefreshToken
+                RefreshToken = newRefreshToken,
+                UserId = uid
             };
         }
 

@@ -40,7 +40,8 @@ namespace fishbuy.Repositories
             {
                 Username = user.Username.ToLower(),
                 Nickname = user.Username,
-                PasswordHash = user.Password.GetMd5Hash()
+                PasswordHash = user.Password.GetMd5Hash(),
+                UserGroup = 9
             });
             await _context.SaveChangesAsync();
 
