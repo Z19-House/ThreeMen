@@ -26,7 +26,6 @@ export default new Vuex.Store({
       state.userImage = localStorage.getItem("userImage");
     },
     setPostId(state,postId){
-      console.log("wo ti joa le")
       state.postId=postId;
     }
   },

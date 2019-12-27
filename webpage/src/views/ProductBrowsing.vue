@@ -9,7 +9,7 @@
             </el-carousel-item>
           </el-carousel>
         </el-col>
-        <el-col :span="12">
+        <el-col :span="8">
           <div>
             <span>{{details.content}}</span>
           </div>
@@ -103,29 +103,63 @@
       <div style="width:100%;margin-bottom: 5px;">
         <span>发布者：</span>
       </div>
-      <div style="float:left; width:40%">
+      <router-link
+        :to="{ name: 'user', params: { username: details.user.username } }"
+        class="PublisherImage"
+      >
         <el-avatar :size="60" :src="details.user.imageUrl">
           <img src="https://cube.elemecdn.com/e/fd/0fc7d20532fdaf769a25683617711png.png" />
         </el-avatar>
-      </div>
-      <div style="float:left; width:40%">
+      </router-link>
+      <router-link
+        :to="{ name: 'user', params: { username: details.user.username } }"
+        class="PublisherInfo"
+      >
         <span>{{details.user.nickname}}</span>
-      </div>
-      <div style="float:left; font-size:14px;">
-        <p>
-          <label>发布时间：</label>
-          {{new Date( `${details.upTime}Z`).toLocaleString("chinese", { hour12: false })}}
+      </router-link>
+      <el-popover placement="bottom-start" width="160" trigger="hover" :disabled="disable">
+        <el-switch
+          v-model="privates"
+          active-text="私密"
+          :active-value="1"
+          :inactive-value="0"
+          @change="privacyStatusChange"
+          style="marign-left:9px"
+        ></el-switch>
+        <el-checkbox
+          slot="reference"
+          v-model="collection"
+          true-label="已收藏"
+          false-label="收藏"
+          @change="collectionStatusChange"
+          border
+        >{{collection}}</el-checkbox>
+      </el-popover>
+      <div class="PublishTime">
+        <p class="timeItem">
+          <span class="timeLable">发布时间：</span>
+          <span
+            class="time"
+          >{{new Date( `${details.upTime}Z`).toLocaleString("chinese", { hour12: false })}}</span>
         </p>
-        <p>
-          <label>修改于：</label>
-          {{new Date( `${details.editTime}Z`).toLocaleString("chinese", { hour12: false })}}
+        <p class="timeItem" style>
+          <span class="timeLable" style>修改于：</span>
+          <span
+            class="time"
+            style
+          >{{new Date( `${details.editTime}Z`).toLocaleString("chinese", { hour12: false })}}</span>
         </p>
       </div>
     </div>
   </div>
 </template>
 
-<style >
+<style  scoped>
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
+}
 p {
   display: block;
   margin-block-start: 1em;
@@ -150,11 +184,68 @@ p {
   margin-right: 10px;
 }
 .Publisher {
+  padding: 10px;
   background-color: #fff;
-  width: 20%;
+  width: 22%;
   float: left;
   position: sticky;
   top: 2px;
+  display: block;
+  margin-bottom: 30px;
+  padding-right: 10px;
+  box-shadow: 0 0 0 1px #eee;
+  box-sizing: border-box;
+}
+.Publisher .PublisherImage {
+  position: relative;
+  display: block;
+  float: left;
+  width: 60px;
+  height: 100px;
+  overflow: hidden;
+  text-decoration: none;
+  border-radius: 4px;
+  box-shadow: 0 0 2px 0 rgba(0, 0, 0, 0.1);
+}
+.Publisher .PublisherInfo {
+  display: block;
+  position: relative;
+  padding-left: 80px;
+  height: 100px;
+  text-align: left;
+  text-decoration: none;
+}
+.Publisher .PublishTime {
+  text-align: left;
+  font-size: 13px;
+  color: #999;
+}
+.PublishTime::after {
+  content: ".";
+  display: block;
+  height: 0;
+  clear: both;
+  visibility: hidden;
+}
+.PublishTime .timeItem {
+  height: 15px;
+  line-height: 15px;
+}
+.timeItem .timeLable {
+  text-align: right;
+  width: 65px;
+  float: left;
+  display: block;
+  position: relative;
+  text-decoration: none;
+  line-height: 15px;
+}
+.timeItem .time {
+  padding-left: 65px;
+  display: block;
+  position: relative;
+  text-decoration: none;
+  line-height: 15px;
 }
 .el-carousel__item {
   background-color: #99a9bf;
@@ -228,28 +319,39 @@ export default {
   data() {
     return {
       userComment: "",
+      collection: "收藏",
+      disable: true,
+      privates: 0,
       details: { user: {} },
-      type: ["", "success", "warning", "danger", "info"],
+      type: ["", "success", "warning", "danger", "info"]
     };
   },
   computed: {
     userImage() {
       return this.$store.state.userImage;
     },
-    postId(){
-      console.log("1111111111")
-      this.LoadMerchandise(this.$store.state.postId)
+    postId() {
+      // this.LoadMerchandise(this.$store.state.postId)
       return this.$store.state.postId;
     }
   },
-  watch:{
-     postId(){
-    //   console.log(newData)
-    //  this.LoadMerchandise(newData);
+  watch: {
+    postId() {
+      //   console.log(newData)
+      this.LoadMerchandise(this.postId);
+      this.LoadCollectionStatus(this.postId);
+    },
+    collection() {
+      if (this.collection == "收藏") {
+        this.disable = true;
+      } else {
+        this.disable = false;
+      }
     }
   },
   mounted() {
-   // this.LoadMerchandise();
+    this.LoadMerchandise(this.postId);
+    this.LoadCollectionStatus(this.postId);
   },
   methods: {
     LoadMerchandise(postId) {
@@ -266,6 +368,23 @@ export default {
           console.log(error);
         });
     },
+    LoadCollectionStatus(postId) {
+      this.axios({
+        method: "get",
+        url: "collection/" + postId
+      })
+        .then(response => {
+          console.log("sdadasd", response);
+          this.collection = "已收藏";
+          this.privates = response.data.privacy;
+          console.log("私密：", this.privates);
+        })
+        .catch(error => {
+          console.log(error);
+          this.collection = "收藏";
+          this.privates = 0;
+        });
+    },
     postComment() {
       if (localStorage.getItem("accessToken")) {
         this.axios({
@@ -275,8 +394,45 @@ export default {
         })
           .then(response => {
             console.log(response);
-            this.LoadMerchandise();
+            this.LoadMerchandise(this.postId);
             this.userComment = "";
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    },
+    privacyStatusChange(status) {
+      this.axios({
+        method: "post",
+        url: "collection/" + this.postId + "?privacy=" + status
+      })
+        .then(response => {
+          console.log(response, "laalalalalal");
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    collectionStatusChange(status) {
+      if (status == "已收藏") {
+        this.axios({
+          method: "post",
+          url: "collection/" + this.postId + "?privacy=" + this.privates
+        })
+          .then(response => {
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }else{
+        this.axios({
+          method: "delete",
+          url: "collection/" + this.postId
+        })
+          .then(response => {
+            console.log(response);
           })
           .catch(error => {
             console.log(error);

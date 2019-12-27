@@ -45,7 +45,8 @@
           </el-upload>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="onSubmit(form)">立即创建</el-button>
+          <el-button type="primary" v-if="!isModify" @click="onSubmit(form)">立即创建</el-button>
+          <el-button type="primary" v-else @click="onModifySubmit(form)">修改</el-button>
           <el-button @click="resetForm('form')">重置</el-button>
         </el-form-item>
       </el-form>
@@ -54,7 +55,6 @@
 </template>
 
 <style>
-
 .a {
   margin: 0 auto;
   width: 500px;
@@ -63,6 +63,9 @@
 
 <script>
 export default {
+  props: {
+    postId: String
+  },
   data() {
     return {
       heads: {
@@ -79,8 +82,44 @@ export default {
       },
       fileList: [],
       tag: [],
-      tagYype: ["", "success", "info", "warning", "danger"]
+      tagYype: ["", "success", "info", "warning", "danger"],
+      isModify: 0
     };
+  },
+  watch: {
+    postId: function() {
+      this.axios({
+        method: "get",
+        url: "post/" + this.postId
+      })
+        .then(response => {
+          console.log("要修改发布商品了", response);
+          this.form.title = response.data.title;
+          this.form.content = response.data.content;
+          this.form.address = response.data.address;
+          this.form.tags = response.data.tags;
+          this.tag = response.data.tags.split(",");
+          this.form.price = response.data.price;
+          var uid = 1000;
+          Array.from(response.data.medias).forEach(it => {
+            this.form.medias.push({
+              resType: it.resType,
+              resUri: it.resUri,
+              uid: uid
+            });
+            this.fileList.push({
+              resType: it.resType,
+              url: it.resUri,
+              uid: uid++
+            });
+          });
+          this.isModify = 1;
+          console.log("ssss", this.form.medias, this.fileList);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    }
   },
   methods: {
     onSubmit(form) {
@@ -92,7 +131,9 @@ export default {
             message: "发布成功"
           }),
           this.$refs["form"].resetFields(),
-          this.fileList = []
+          (this.fileList = []),
+          (this.tag = []),
+          this.$emit("isPost", "success")
         )
         .catch(error => {
           this.$message({
@@ -149,6 +190,29 @@ export default {
     resetForm(form) {
       this.$refs[form].resetFields();
       this.fileList = [];
+      this.isModify = 0;
+      this.tag = [];
+    },
+    onModifySubmit(form) {
+      this.axios
+        .put("post/" + this.postId, JSON.stringify(form))
+        .then(
+          this.$message({
+            type: "success",
+            message: "修改成功"
+          }),
+          this.$refs["form"].resetFields(),
+          (this.fileList = []),
+          (this.isModify = 0),
+          (this.tag = []),
+          this.$emit("isModify", "success")
+        )
+        .catch(error => {
+          this.$message({
+            type: "error",
+            message: "错误！错误码：" + error.status
+          });
+        });
     }
   }
 };

@@ -9,6 +9,9 @@
         >
           <el-image style="width: 100%; height: 100%" :src="product.imageUrl" fit="cover"></el-image>
         </router-link>
+        <div class="productPrivacy" v-if="product.isPrivacy">
+          <i class="el-icon-lock" />
+        </div>
         <router-link
           :to="{ name: 'productBrowsing',params: { postId: product.postId}}"
           class="productInfo"
@@ -30,13 +33,36 @@
             <span style="color:red;">{{product.price}}</span>
           </div>
         </router-link>
-        <div class="productOptions"></div>
+        <div class="productOptions" v-if="isCurrentUser">
+          <el-dropdown trigger="hover" @command="optionCommand">
+            <i class="el-icon-menu" />
+            <el-dropdown-menu slot="dropdown">
+              <!--0是公有，1是私有-->
+              <div v-if="Category=='collection'">
+                <el-dropdown-item
+                  :command="{options:'collection',privacy:0,postId:product.postId}"
+                  :disabled="!product.isPrivacy"
+                >公开</el-dropdown-item>
+                <el-dropdown-item
+                  :command="{options:'collection',privacy:1,postId:product.postId}"
+                  :disabled="product.isPrivacy"
+                >私有</el-dropdown-item>
+                <el-dropdown-item
+                  :command="{options:'collection',privacy:2,postId:product.postId}"
+                >取消收藏</el-dropdown-item>
+              </div>
+              <div v-else-if="Category=='posts'">
+                <el-dropdown-item :command="{options:'post',command:0,postId:product.postId}">修改</el-dropdown-item>
+                <el-dropdown-item :command="{options:'post',command:1,postId:product.postId}">删除</el-dropdown-item>
+              </div>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
       </li>
       <li class="follow-empty" v-if="total==0">
         <p>这里啥都没有</p>
       </li>
     </ul>
-    <div class="clearfloat"></div>
     <div class="pagelistbox">
       <el-pagination
         background
@@ -53,14 +79,13 @@
 </template>
 
 <style scoped>
-a{
+a {
   color: inherit;
-    text-decoration: none;
-    transition: color .2s ease,background-color .2s ease;
+  text-decoration: none;
+  transition: color 0.2s ease, background-color 0.2s ease;
 }
 .products {
   width: 100%;
-  padding:20px;
   background-color: #fff;
 }
 .products .follow-empty {
@@ -80,7 +105,6 @@ a{
   position: relative;
   min-height: 140px;
   margin: 0;
-  padding: 0;
   list-style: none;
   padding-bottom: 10px;
   text-align: left;
@@ -99,7 +123,7 @@ a{
   height: 140px;
   float: left;
   margin-bottom: 30px;
-  padding-right: 20px;
+  padding-right: 10px;
   box-sizing: border-box;
 }
 .productItem a.productImage {
@@ -124,6 +148,12 @@ a{
   position: absolute;
   right: 20px;
   bottom: 6px;
+  font-size: 14px;
+}
+.productItem .productPrivacy {
+  position: absolute;
+  right: 20px;
+  top: 6px;
   font-size: 14px;
 }
 .productItem .productInfo .productTitle {
@@ -192,7 +222,7 @@ export default {
     //设置每页显示的条目数
     pageSize: {
       type: [Number, String],
-      default: () => 18
+      default: () => 1
     },
     //设置页码按钮的数量，当总页数超过该值时会折叠
     pagerCount: {
@@ -204,9 +234,9 @@ export default {
       default: () => "1"
     },
     //选择获取发布或者收藏
-    Category:{
-      type:String,
-      default:()=>"posts"
+    Category: {
+      type: String,
+      default: () => "posts"
     }
   },
   data() {
@@ -214,48 +244,150 @@ export default {
       currentPage: 1,
       total: 0,
       type: ["", "success", "warning", "danger", "info"],
-      page: [
-        {
-          pages: 1, //页数val
-          pageSize: 18, //条目数
-          skip: 0,
-          product: []
-        }
-      ]
+      page: [],
+      isCurrentUser: 0,
+      isDisable: 1
     };
+  },
+  watch: {
+    username: function() {
+      this.page = [];
+      this.LoadPage1();
+      this.judgeCurrentUser();
+    }
   },
   mounted() {
     this.$nextTick(function() {
       // Code that will run only after the
       // entire view has been rendered
       this.LoadPage1();
+      this.judgeCurrentUser();
     });
   },
   methods: {
     currentChange(val) {
-      if (this.page[val - 1].pageSize == this.pageSize) {
-        console.log("加载第" + val + "页");
-      } else {
-        console.log("已达最大值");
-      }
+      this.loadOtherPage(val);
     },
+    //计算页数，加载第一页
     LoadPage1() {
       this.axios
-        .get("user/" + this.username + "/"+this.Category, {
+        .get("user/" + this.username + "/" + this.Category, {
           params: {
             skip: 0,
-            take: 12
+            take: this.pageSize
           }
         })
         .then(response => {
-          this.page[0].product = response.data.data;
-          this.page[0].pageSize = response.data.data.length;
+          this.page.push({
+            pages: 1, //页数val
+            pageSize: response.data.data.length, //条目数
+            skip: 0,
+            product: response.data.data
+          });
           this.total = response.data.count;
-          console.log(response.data, this.page[0], this.total);
+          var i = 2;
+          var j = this.total / this.pageSize;
+          var pages = (0 | j) + 1;
+          while (i <= pages) {
+            this.page.push({
+              pages: i, //页数val
+              pageSize: 0, //条目数
+              skip: this.page[i - 2].skip + this.pageSize,
+              product: []
+            });
+            i++;
+          }
+          console.log(response.data, this.page, this.total, j, pages);
         })
         .catch(error => {
           console.log(error);
         });
+    },
+    loadOtherPage(currentPage) {
+      if (this.page[currentPage - 1].pageSize == 0) {
+        this.axios
+          .get("user/" + this.username + "/" + this.Category, {
+            params: {
+              skip: this.page[currentPage - 1].skip,
+              take: this.pageSize
+            }
+          })
+          .then(response => {
+            this.page[currentPage - 1].product = response.data.data;
+            this.page[currentPage - 1].pageSize = response.data.data.length;
+            console.log(response.data, this.page, this.total);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    },
+    judgeCurrentUser() {
+      if (this.username == localStorage.getItem("username")) {
+        this.isCurrentUser = 1;
+      } else {
+        this.isCurrentUser = 0;
+      }
+    },
+    optionCommand(command) {
+      console.log("操作：", command);
+      if (command.options == "collection") {
+        this.collectionOption(command.privacy, command.postId);
+      } else if (command.options == "post") {
+        this.postOption(command);
+      }
+    },
+    collectionOption(privacy, postId) {
+      if (privacy != 2) {
+        this.axios({
+          method: "post",
+          url: "collection/" + postId + "?privacy=" + privacy
+        })
+          .then(response => {
+            this.page = [];
+            this.LoadPage1();
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      } else {
+        this.axios({
+          method: "delete",
+          url: "collection/" + postId
+        })
+          .then(response => {
+            this.page = [];
+            this.LoadPage1();
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
+    },
+    //0--修改，1--删除
+    postOption(command) {
+      if (command.command == 0) {
+        this.$emit("getPostId", command.postId);
+      } else if (command.command == 1) {
+        this.axios({
+          method: "delete",
+          url: "post/" + command.postId
+        })
+          .then(response => {
+            this.$message({
+              type: "success",
+              message: "删除成功"
+            });
+            this.page = [];
+            this.LoadPage1();
+            console.log(response);
+          })
+          .catch(error => {
+            console.log(error);
+          });
+      }
     }
   }
 };

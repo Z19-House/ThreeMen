@@ -120,7 +120,11 @@ export default {
       }
     };
   },
-
+  watch:{
+    username:function(){
+      this.LoadUserInformation();
+    }
+  },
   mounted() {
     this.LoadUserInformation();
   },
@@ -162,7 +166,8 @@ export default {
         data: JSON.stringify(ruleForms)
       })
         .then(response => {
-          console.log(response);
+          console.log("dddddd",response);
+          this.$store.commit("userImage",response.data.imageUrl);
           this.$router.go(0);
         })
         .catch(error => {
