@@ -170,10 +170,14 @@ namespace fishbuy.Controllers
                 beforeDateTime = DateTime.UtcNow;
             }
             // 判断查询的用户与登录的用户是否相同，相同则显示私有收藏
-            var uid = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userId, out int uid))
+            {
+                return BadRequest(new { error = "Unknow user ID." });
+            }
             var uname = User.FindFirst(ClaimTypes.Name)?.Value;
             bool isAuthorized = false;
-            if (username == uname || username == uid)
+            if (username == uname || username == userId)
             {
                 isAuthorized = true;
             }
@@ -185,7 +189,7 @@ namespace fishbuy.Controllers
             var list = new List<PostMediumWithCollectionStatus>();
             foreach (var item in collectPosts)
             {
-                list.Add(PostMediumWithCollectionStatus.FromPost(item, _imageServer));
+                list.Add(PostMediumWithCollectionStatus.FromPost(item, uid, _imageServer));
             }
 
             return new ListResult<List<PostMediumWithCollectionStatus>>

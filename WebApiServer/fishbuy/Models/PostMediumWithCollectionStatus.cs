@@ -18,7 +18,7 @@ namespace fishbuy.Models
         /// </summary>
         public int IsPrivacy { get; set; }
 
-        public new static PostMediumWithCollectionStatus FromPost(Post post, string imageServer)
+        public static PostMediumWithCollectionStatus FromPost(Post post, int uid, string imageServer)
         {
             return new PostMediumWithCollectionStatus
             {
@@ -33,7 +33,7 @@ namespace fishbuy.Models
                 Address = post.Address,
                 Tags = post.Tags,
                 ImageUrl = post.MediaLink.FirstOrDefault(it => it.ResType == ResType.Image.ToString())?.ResUri.AddServerAddress(imageServer),
-                IsPrivacy = post.Collection.FirstOrDefault(it => it.UserId == post.User.UserId)?.Privacy ?? 0
+                IsPrivacy = post.Collection.FirstOrDefault(it => it.UserId == uid)?.Privacy ?? 0
             };
         }
     }
