@@ -54,6 +54,8 @@ namespace fishbuy.Repositories
         public async Task<List<User>> GetUsersByNickname(string nickname, int skip, int take)
         {
             return await _context.User.Where(it => it.Nickname.Contains(nickname))
+                .Include(it => it.Post)
+                .ThenInclude(it => it.MediaLink)
                 .Skip(skip)
                 .Take(take)
                 .ToListAsync();

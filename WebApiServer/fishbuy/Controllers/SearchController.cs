@@ -99,17 +99,17 @@ namespace fishbuy.Controllers
         /// <returns></returns>
         [ProducesResponseType(StatusCodes.Status200OK)]
         [HttpGet("user/{keywords}")]
-        public async Task<ActionResult<ListResult<List<UserMedium>>>> SearchUsers(string keywords, int skip = 0, int take = 20)
+        public async Task<ActionResult<ListResult<List<UserMediumWithPostCount>>>> SearchUsers(string keywords, int skip = 0, int take = 20)
         {
             var posts = await _repo.GetUsersByNickname(keywords, skip, take);
 
-            var list = new List<UserMedium>();
+            var list = new List<UserMediumWithPostCount>();
             foreach (var item in posts)
             {
-                list.Add(UserMedium.FromUser(item, _imageServer));
+                list.Add(UserMediumWithPostCount.FromUser(item, _imageServer));
             }
 
-            return new ListResult<List<UserMedium>>
+            return new ListResult<List<UserMediumWithPostCount>>
             {
                 Data = list,
                 Count = await _repo.GetUsersByNicknameCount(keywords)
