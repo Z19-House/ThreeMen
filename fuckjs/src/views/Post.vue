@@ -1,5 +1,5 @@
 ﻿<template>
-  <q-page v-if="post">
+  <q-page v-if="post" style="margin-bottom:140px">
     <q-carousel
       v-if="post.medias.length > 0"
       swipeable
@@ -42,12 +42,14 @@
           <div class="text-h5 text-red">￥{{ post.price }}</div>
           <div class="text-h6">{{ post.title }}</div>
           <TagsComponent :tags="post.tags" />
+          <div class="text-subtitle2" style="color:gray" >发布时间：{{ new Date( `${post.upTime}Z`).toLocaleString("chinese", { hour12: false }) }}</div>
         </q-card-section>
 
         <q-separator />
 
         <q-card-section>
           <pre class="text-subtitle2">{{ post.content }}</pre>
+          <div class="text-subtitle2" style="color:gray" >编辑时间：{{ new Date( `${post.editTime}Z`).toLocaleString("chinese", { hour12: false }) }}</div>
         </q-card-section>
 
         <q-separator />
@@ -97,7 +99,9 @@
             </q-item-section>
             <q-item-section>
               <q-item-label>{{ comment.user.nickname }}</q-item-label>
-              <q-item-label caption>{{ comment.upTime }}</q-item-label>
+              <q-item-label
+                caption
+              >{{ new Date( `${comment.upTime}Z`).toLocaleString("chinese", { hour12: false }) }}</q-item-label>
             </q-item-section>
             <q-card-actions
               v-if="comment.user.userId == $store.state.userId || $store.state.userGroup == 1"
@@ -288,7 +292,10 @@ export default {
     async deletePost() {
       try {
         await api.deletePost(this.id);
-        this.$router.replace({name: "home", params: {reloadDate: new Date()}});
+        this.$router.replace({
+          name: "home",
+          params: { reloadDate: new Date() }
+        });
       } catch (error) {
         console.log(error.response.data);
       }
