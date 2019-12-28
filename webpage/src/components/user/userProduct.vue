@@ -4,6 +4,7 @@
     <ul class="Productlist">
       <li v-for="(product,index) in page[currentPage-1].product" :key="index" class="productItem">
         <router-link
+        target="_blank"
           :to="{ name: 'productBrowsing',params: { postId: product.postId}}"
           class="productImage"
         >
@@ -13,6 +14,7 @@
           <i class="el-icon-lock" />
         </div>
         <router-link
+        target="_blank"
           :to="{ name: 'productBrowsing',params: { postId: product.postId}}"
           class="productInfo"
         >

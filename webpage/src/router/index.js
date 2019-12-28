@@ -9,7 +9,7 @@ import homeCommodity from "../views/HomeCommodity.vue";
 import productBrowsing from "../views/ProductBrowsing.vue";
 import user from "../views/User.vue"
 import store from '@/store/index';
-
+import homeSearch from '@/views/HomeSearch.vue'
 
 Vue.use(VueRouter)
 
@@ -37,8 +37,13 @@ const routes = [
           console.log("1111",to.params.postId)
           store.commit("setPostId",to.params.postId);
           next(true);
-
-        }
+        },
+        
+      },
+      {
+        path: '/homeSearch',
+        name: 'homeSearch',
+        component: homeSearch 
       }
     ]
   },

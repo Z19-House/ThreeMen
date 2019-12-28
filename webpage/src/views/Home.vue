@@ -34,7 +34,8 @@ export default {
   }
 };
 </script>
-<style>
+<style  >
+
 .homeBody {
   background-color: #f4f4f4;
 }

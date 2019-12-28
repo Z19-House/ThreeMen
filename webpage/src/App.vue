@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <keep-alive  >
+    <keep-alive>
       <router-view />
     </keep-alive>
   </div>
@@ -21,9 +21,14 @@ export default {
   text-align: center;
 }
 body {
-  overflow:auto !important;
+  overflow: auto !important;
   margin: 0 0 0;
-      background-color: #f4f4f4;
-
+  background-color: #f4f4f4;
+}
+a {
+  text-decoration: none;
+  outline: 0;
+  cursor: pointer;
+  color: #2c3e50;
 }
 </style>

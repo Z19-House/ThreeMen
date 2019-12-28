@@ -7,42 +7,46 @@
     </div>
     <div>
       <ul class="shopDataList">
-          <router-link
-            v-for="(shopData,index) in objectArray"
-            :key="index"
-            :to="{ name: 'productBrowsing',params: { postId: shopData.postId}}"
-            tag="li"
-          >
-            <el-card class="list-item" shadow="hover">
-              <el-image
-                style="width: 150px; height: 150px ;"
-                :src="shopData.imageUrl"
-                fit="cover"
-              />
-              <div style="line-height: 30px; padding: 0 20px; height: 30px;">
-                <p style="font-size: 14px;line-height: 20px;">{{shopData.title}}</p>
+        <router-link
+          v-for="(shopData,index) in objectArray"
+          :key="index"
+          :to="{ name: 'productBrowsing',params: { postId: shopData.postId}}"
+          target="_blank"
+        >
+          <el-card class="list-item" shadow="hover">
+            <el-image
+              style="width: 150px; height: 150px ;box-shadow: 0 0 0 1px #eee;"
+              :src="shopData.imageUrl"
+              fit="cover"
+            />
+            <div
+              style="line-height: 45px; height: 45px;  overflow: hidden;
+              white-space: nowrap;
+                text-overflow: ellipsis;"
+            >
+              <p style="font-size: 14px;line-height: 45px;">{{shopData.title}}</p>
+            </div>
+            <div
+              style=" font-size: 16px;line-height: 30px;height: 30px;color: #e1251b;"
+              v-if="shopData.tags"
+            >
+              <el-tag
+                v-for="(tags,index) in shopData.tags.split(',')"
+                :key="index"
+                :type="type[index]"
+                effect="dark"
+                size="mini"
+                style="margin-right:3px"
+              >#{{tags}}</el-tag>
+            </div>
+            <div style="margin-top: 10px;">
+              <div style=" font-size: 16px;line-height: 18px;height: 18px;color: #e1251b;">
+                <i>¥</i>
+                <span style="font-size: 20px; font-weight: 700;">{{shopData.price}}</span>
               </div>
-              <div
-                style=" font-size: 16px;line-height: 30px;height: 30px;color: #e1251b;"
-                v-if="shopData.tags"
-              >
-                <el-tag
-                  v-for="(tags,index) in shopData.tags.split(',')"
-                  :key="index"
-                  :type="type[index]"
-                  effect="dark"
-                  size="mini"
-                  style="margin-right:3px"
-                >#{{tags}}</el-tag>
-              </div>
-              <div style="margin-top: 10px;">
-                <div style=" font-size: 16px;line-height: 18px;height: 18px;color: #e1251b;">
-                  <i>¥</i>
-                  <span style="font-size: 20px; font-weight: 700;">{{shopData.price}}</span>
-                </div>
-              </div>
-            </el-card>
-          </router-link>
+            </div>
+          </el-card>
+        </router-link>
       </ul>
     </div>
   </div>
@@ -78,13 +82,7 @@ export default {
         var date = new Date().toLocaleString("chinese", { hour12: false });
         this.axios({
           method: "get",
-          url:
-            "post?beforeDateTime=" +
-            date +
-            "&skip=" +
-            data +
-            "&take=20",
-
+          url: "post?beforeDateTime=" + date + "&skip=" + data + "&take=20"
         })
           .then(response => {
             console.log(response);
@@ -107,13 +105,7 @@ export default {
       console.log(date);
       this.axios({
         method: "get",
-        url:
-          "post?beforeDateTime=" +
-          date +
-          "&skip=" +
-          data +
-          "&take=20",
-
+        url: "post?beforeDateTime=" + date + "&skip=" + data + "&take=20"
       })
         .then(response => {
           Array.from(response.data.data).forEach(it =>
@@ -132,21 +124,18 @@ export default {
 </script>
 
 <style>
-
-
 #homeCommodity {
-    position: relative;
-    margin: 20px 16% 0;
-  
+  position: relative;
+  margin: 20px 16% 0;
 }
 .list-item {
   float: left;
   width: 230px;
   height: 322px;
-  margin: 0  0 20px 20px;
+  margin: 0 0 20px 20px;
 }
-li{
-list-style: none;
+li {
+  list-style: none;
 }
 .shopDataList::after {
   content: ".";

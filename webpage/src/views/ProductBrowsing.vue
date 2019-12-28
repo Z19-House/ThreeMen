@@ -104,6 +104,7 @@
         <span>发布者：</span>
       </div>
       <router-link
+      target="_blank"
         :to="{ name: 'user', params: { username: details.user.username } }"
         class="PublisherImage"
       >
@@ -158,7 +159,6 @@
 a {
   color: inherit;
   text-decoration: none;
-  transition: color 0.2s ease, background-color 0.2s ease;
 }
 p {
   display: block;
