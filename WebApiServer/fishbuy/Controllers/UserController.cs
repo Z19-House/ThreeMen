@@ -171,10 +171,7 @@ namespace fishbuy.Controllers
             }
             // 判断查询的用户与登录的用户是否相同，相同则显示私有收藏
             var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(userId, out int uid))
-            {
-                return BadRequest(new { error = "Unknow user ID." });
-            }
+            int.TryParse(userId, out int uid);
             var uname = User.FindFirst(ClaimTypes.Name)?.Value;
             bool isAuthorized = false;
             if (username == uname || username == userId)
