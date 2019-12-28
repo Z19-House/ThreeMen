@@ -56,7 +56,7 @@
                 <q-item-section>修改密码</q-item-section>
               </q-item>
               <q-separator />
-              <q-item clickable @click="signOut">
+              <q-item clickable @click="confirmSignOut = true">
                 <q-item-section>注销</q-item-section>
               </q-item>
             </q-list>
@@ -64,6 +64,20 @@
         </q-btn>
       </q-toolbar>
     </q-header>
+
+    <!-- 注销登录 -->
+    <q-dialog v-model="confirmSignOut">
+      <q-card style="min-width: 300px">
+        <q-card-section>
+          <div class="text-h6">确认注销登录？</div>
+        </q-card-section>
+
+        <q-card-actions align="right" class="text-primary">
+          <q-btn flat label="取消" v-close-popup />
+          <q-btn flat label="注销" color="red" @click="signOut" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
     <q-page-container>
       <keep-alive include="home,user,search">
@@ -80,7 +94,8 @@ import api from "@/api";
 export default {
   data() {
     return {
-      text: ""
+      text: "",
+      confirmSignOut: false
     };
   },
   computed: {
@@ -101,6 +116,11 @@ export default {
     signOut() {
       api.signOut();
       this.$store.commit("removeUser");
+      this.$q.notify({
+        icon: "done",
+        color: "positive",
+        message: "已注销登录！"
+      });
       this.$router.replace("sign-out");
       this.$router.replace("/");
     },
