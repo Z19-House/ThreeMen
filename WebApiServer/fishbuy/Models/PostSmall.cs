@@ -31,6 +31,11 @@ namespace fishbuy.Models
         /// </summary>
         public decimal Price { get; set; }
 
+        /// <summary>
+        /// 编辑时间
+        /// </summary>
+        public DateTime EditTime { get; set; }
+
         public static PostSmall FromPost(Post post, string imageServer)
         {
             return new PostSmall
@@ -38,6 +43,7 @@ namespace fishbuy.Models
                 PostId = post.PostId,
                 Title = post.Title,
                 Price = post.Price,
+                EditTime = post.EditTime,
                 Status = post.Status,
                 ImageUrl = post.MediaLink.FirstOrDefault(it => it.ResType == ResType.Image.ToString())?.ResUri.AddServerAddress(imageServer)
             };
