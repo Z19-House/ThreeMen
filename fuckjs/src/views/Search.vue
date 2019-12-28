@@ -5,6 +5,7 @@
         dense
         standout
         outlined
+        debounce="1000"
         v-model="keyword"
         v-on:keyup.enter="search"
         class="q-ml-md"
@@ -53,9 +54,32 @@ export default {
       keyword: this.$route.query.keyword
     };
   },
+  computed: {},
+  watch: {
+    tab(newVal) {
+      if (newVal != this.$route.query.type) {
+        this.$router.push({
+          name: "search",
+          query: { type: this.tab, keyword: this.keyword }
+        });
+      }
+    },
+    $route(to) {
+      if (to.name == "search") {
+        this.tab = to.query.type;
+        this.keyword = to.query.keyword;
+      }
+    }
+  },
   methods: {
     getUrl() {
       return "/search/" + this.tab + "/" + this.keyword;
+    },
+    search() {
+      this.$router.push({
+        name: "search",
+        query: { type: this.tab, keyword: this.keyword }
+      });
     }
   }
 };

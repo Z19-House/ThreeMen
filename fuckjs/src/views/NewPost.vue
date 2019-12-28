@@ -37,9 +37,21 @@ export default {
           postData.address,
           postData.medias
         );
-        this.$router.replace({name: "home", params: {reloadDate: new Date()}});
+        this.$q.notify({
+          icon: "done",
+          color: "positive",
+          message: "发布成功！"
+        });
+        this.$router.replace({
+          name: "home",
+          params: { reloadDate: new Date() }
+        });
       } catch (error) {
         console.log(error.response.data);
+        this.$q.notify({
+          color: "negative",
+          message: "发布失败！"
+        });
       }
     }
   },

@@ -34,9 +34,18 @@ export default {
           postData.address,
           postData.medias
         );
+        this.$q.notify({
+          icon: "done",
+          color: "positive",
+          message: "编辑成功！"
+        });
         this.$router.replace(`/post/${this.id}`);
       } catch (error) {
         console.log(error.response.data);
+        this.$q.notify({
+          color: "negative",
+          message: "编辑失败！"
+        });
       }
     },
     async getPostDetail() {

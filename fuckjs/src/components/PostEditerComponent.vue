@@ -1,8 +1,22 @@
 ﻿<template>
   <div class="row justify-center">
     <div class="col-xs-12 col-sm-8 col-md-6 col-lg-4 q-pa-md q-gutter-md column items-stretch">
-      <q-input v-model="post.title" label="标题" />
-      <q-input v-model="post.content" outlined label="正文" type="textarea" />
+      <q-input
+        ref="title"
+        v-model="post.title"
+        label="标题 *"
+        lazy-rules
+        :rules="[val => !!val || '标题不能为空']"
+      />
+      <q-input
+        ref="content"
+        v-model="post.content"
+        outlined
+        label="正文 *"
+        type="textarea"
+        lazy-rules
+        :rules="[val => !!val || '正文不能为空']"
+      />
       <div class="q-gutter-xs">
         <q-chip
           v-for="(tag, index) in post.tags"
@@ -42,24 +56,35 @@
 
       <q-input
         outlined
+        ref="price"
         v-model="post.price"
-        label="商品价格"
+        label="商品价格 *"
         mask="#.##"
         fill-mask="0"
         reverse-fill-mask
         input-class="text-right"
+        lazy-rules
+        :rules="[val => val != 0 || '商品价格不能为零']"
       />
-      <q-input outlined v-model="post.address" label="地址" />
+      <q-input
+        outlined
+        ref="address"
+        v-model="post.address"
+        label="地址 *"
+        lazy-rules
+        :rules="[val => !!val || '地址不能为空']"
+      />
 
       <el-upload
         ref="imageUploader"
         action="null"
         list-type="picture-card"
+        :before-upload="beforeImageUpload"
         :http-request="uploadImage"
         :on-preview="handlePictureCardPreview"
         :on-remove="handleRemove"
         :limit="9"
-        accept=".jpg, .jpeg, .gif, .png, .bmp, .svg"
+        accept=".jpg, .jpeg, .gif, .png, .bmp"
       >
         <i class="el-icon-plus"></i>
       </el-upload>
@@ -149,9 +174,34 @@ export default {
       this.dialogImageUrl = file.url;
       this.dialogVisible = true;
     },
+    beforeImageUpload(file) {
+      let isLt2M = file.size / 1024 / 1024 < 2;
+
+      if (!isLt2M) {
+        this.$q.notify({
+          color: "negative",
+          message: "上传图片大小不能超过 2MB!"
+        });
+      }
+      return isLt2M;
+    },
     async savePost() {
       //   console.log(this.post);
-      this.$emit("savePost", this.post);
+      this.$refs.title.validate();
+      this.$refs.content.validate();
+      this.$refs.price.validate();
+      this.$refs.address.validate();
+
+      if (
+        this.$refs.title.hasError ||
+        this.$refs.content.hasError ||
+        this.$refs.price.hasError ||
+        this.$refs.address.hasError
+      ) {
+        this.formHasError = true;
+      } else {
+        this.$emit("savePost", this.post);
+      }
     }
   },
   created() {

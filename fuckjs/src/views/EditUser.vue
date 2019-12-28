@@ -7,7 +7,7 @@
         :http-request="uploadImage"
         :show-file-list="false"
         :before-upload="beforeImageUpload"
-        accept=".jpg, .jpeg, .gif, .png, .bmp, .svg"
+        accept=".jpg, .jpeg, .gif, .png, .bmp"
       >
         <q-avatar size="100px">
           <q-img
@@ -19,10 +19,27 @@
         </q-avatar>
       </el-upload>
 
-      <q-input outlined v-model="nickname" label="昵称" />
-      <q-input outlined v-model="phone" label="手机" />
-      <q-input outlined v-model="birthDate" label="生日" />
-      <q-input outlined v-model="sex" label="性别" />
+      <q-input
+        outlined
+        v-model="nickname"
+        ref="nickname"
+        label="昵称 *"
+        lazy-rules
+        :rules="[val => val && val.length >= 2 && val.length <= 32 || '昵称在2-32位之间']"
+      />
+      <q-input outlined v-model="phone" label="手机" mask="############" />
+      <q-input outlined v-model="birthDate" label="生日" mask="date">
+        <template v-slot:append>
+          <q-icon name="event" class="cursor-pointer">
+            <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+              <q-date v-model="birthDate" @input="() => $refs.qDateProxy.hide()" />
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+      <q-select outlined v-model="sex" label="性别" :options="[
+          '保密', '男', '女'
+        ]" />
       <q-input outlined v-model="address" label="地址" />
 
       <q-btn color="primary" label="保存用户信息" @click="editUserInfo" />
@@ -64,27 +81,37 @@ export default {
       this.imageUrl = response.data.imageUrl;
     },
     async editUserInfo() {
-      try {
-        let user = (await api.editUserInfo(
-          this.nickname,
-          this.phone,
-          this.birthDate,
-          this.sex,
-          this.address,
-          this.imageUrl
-        )).data;
-        this.$store.commit("setUser", {
-          userId: user.userId,
-          username: user.username,
-          userImage: user.imageUrl
-        });
-        if (this.firstSign) {
-          this.$router.replace("/");
-        } else {
-          this.$router.go(-1);
+      this.$refs.nickname.validate();
+      if (this.$refs.nickname.hasError) {
+        this.formHasError = true;
+      } else {
+        try {
+          let user = (await api.editUserInfo(
+            this.nickname,
+            this.phone,
+            this.birthDate,
+            this.sex,
+            this.address,
+            this.imageUrl
+          )).data;
+          this.$store.commit("setUser", {
+            userId: user.userId,
+            username: user.username,
+            userImage: user.imageUrl
+          });
+          this.$q.notify({
+            icon: "done",
+            color: "positive",
+            message: "保存用户信息成功！"
+          });
+          if (this.firstSign) {
+            this.$router.replace("/");
+          } else {
+            this.$router.go(-1);
+          }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
     },
     uploadedImage(info) {
@@ -94,10 +121,13 @@ export default {
       this.imageUrl = "";
     },
     beforeImageUpload(file) {
-      const isLt2M = file.size / 1024 / 1024 < 2;
+      let isLt2M = file.size / 1024 / 1024 < 2;
 
       if (!isLt2M) {
-        this.$message.error("上传头像图片大小不能超过 2MB!");
+        this.$q.notify({
+          color: "negative",
+          message: "上传头像图片大小不能超过 2MB!"
+        });
       }
       return isLt2M;
     }
