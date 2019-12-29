@@ -4,7 +4,7 @@
       <loginHead></loginHead>
     </div>
     <div id="body">
-      <div style="float:right;margin-top:3%;margin-right:13%; ">
+      <div class="login-form">
         <loginWindow />
       </div>
     </div>
@@ -32,5 +32,11 @@ export default {
   background-image: url("../assets/login_page.jpg");
   background-position: center;
   background-size: cover;
+}
+.login-form {
+  height: 300px;
+  width: 300px;
+  float: right;
+  margin: 5% 13%;
 }
 </style>
