@@ -1,7 +1,7 @@
 <template>
   <div id="loginWindow">
-    <el-tabs type="border-card">
-      <el-tab-pane label="密码登录">
+    <el-tabs type="border-card" @tab-click="loginModeSwitching" v-model="loginMode">
+      <el-tab-pane label="密码登录" name="formLogin">
         <div class="inputForm">
           <el-form :model="formlogin">
             <el-form-item>
@@ -26,11 +26,11 @@
           </el-form>
         </div>
       </el-tab-pane>
-      <el-tab-pane label="二维码登录">
+      <el-tab-pane label="二维码登录" name="QRLogin">
         <div class="qr-login">
           <div class="img">
-            <el-image style="width:100%; height: 100%;" :src="url" fit="covor"></el-image>
-            <span>请扫描二维码登录</span>
+            <div ref="qrcode"></div>
+            <span >请扫描二维码登录</span>
           </div>
         </div>
       </el-tab-pane>
@@ -73,13 +73,17 @@ div {
 </style>
 
 <script>
+import QRCode from 'qrcodejs2';
+
 export default {
   data() {
     return {
       formlogin: {
         username: "",
         password: ""
-      }
+      },
+      url:"",
+      loginMode:"formLogin"
     };
   },
   methods: {
@@ -114,6 +118,19 @@ export default {
     },
     register() {
       this.$router.replace({ path: "/register" });
+    },
+    loginModeSwitching(mode){
+      if(mode.name=="QRLogin"){
+        console.log("进来了",QRCode)
+        new QRCode(this.$refs.qrcode, {
+          text: 'https://www.baidu.com',
+          width: 130,
+          height: 130,
+          colorDark: "#333333", //二维码颜色
+          colorLight: "#ffffff", //二维码背景色
+          correctLevel: QRCode.CorrectLevel.L//容错率，L/M/H
+        })
+      }
     }
   }
 };
