@@ -74,7 +74,6 @@ export default {
   destroyed() {
     window.removeEventListener("scroll", this.load, false);
   },
-
   methods: {
     load() {
       if (getScrollTop() + getWindowHeight() >= getScrollHeight()) {

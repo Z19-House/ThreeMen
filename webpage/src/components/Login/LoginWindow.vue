@@ -29,8 +29,17 @@
       <el-tab-pane label="二维码登录" name="QRLogin">
         <div class="qr-login">
           <div class="img">
-            <div ref="qrcode"></div>
-            <span >请扫描二维码登录</span>
+            <!-- <div ref="qrcode"></div> -->
+            <div v-if="disable">
+              <vueQr :text="token" :size="130" />
+            </div>
+            <div class="refresh" v-if="!disable">
+              <span style="margin:auto;font-size:60px;line-height:130px">
+                <el-button class="buttonStyle" icon="el-icon-refresh" @click="refreshQRCode"></el-button>
+                <!-- <i class="el-icon-refresh" /> -->
+              </span>
+            </div>
+            <span>请扫描二维码登录</span>
           </div>
         </div>
       </el-tab-pane>
@@ -70,20 +79,36 @@ div {
   left: 0;
   right: 0;
 }
+.buttonStyle {
+  height: 100%;
+  width: 100%;
+  font-size: 60px;
+  background-color: rgba(0, 0, 0, 0.2);
+  color: #2c3e50;
+}
+.refresh {
+  width: 130px;
+  height: 130px;
+  background-image: url("../../assets/22222.jpg");
+  display: inline-block;
+}
 </style>
 
 <script>
-import QRCode from 'qrcodejs2';
-
+import vueQr from "vue-qr";
 export default {
+  components: {
+    vueQr
+  },
   data() {
     return {
       formlogin: {
         username: "",
         password: ""
       },
-      url:"",
-      loginMode:"formLogin"
+      loginMode: "formLogin",
+      token: "",
+      disable: true
     };
   },
   methods: {
@@ -97,13 +122,8 @@ export default {
         .then(response => {
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
-          localStorage.setItem("username", formName.username);
-          localStorage.setItem("username", formName.username);
-          this.$store.commit("login", {
-            accessToken: response.data.accessToken,
-            username: formName.username
-          });
-          this.$store.dispatch("userLoad", formName.username);
+          this.$store.commit("login", response.data.accessToken);
+          this.$store.dispatch("userLoad", response.data.userId);
           this.$router.replace({ path: "/" });
         })
         .catch(error => {
@@ -113,24 +133,54 @@ export default {
             localStorage.removeItem("accessToken");
             localStorage.removeItem("refreshToken");
             localStorage.removeItem("username");
+            localStorage.removeItem("userImage");
           }
         });
     },
     register() {
       this.$router.replace({ path: "/register" });
     },
-    loginModeSwitching(mode){
-      if(mode.name=="QRLogin"){
-        console.log("进来了",QRCode)
-        new QRCode(this.$refs.qrcode, {
-          text: 'https://www.baidu.com',
-          width: 130,
-          height: 130,
-          colorDark: "#333333", //二维码颜色
-          colorLight: "#ffffff", //二维码背景色
-          correctLevel: QRCode.CorrectLevel.L//容错率，L/M/H
-        })
+    loginModeSwitching(mode) {
+      if (mode.name == "QRLogin") {
+        this.getQRCode();
       }
+    },
+    getQRCode() {
+      this.axios
+        .get("qrcode/code")
+        .then(res => {
+          this.token = res.data.token;
+          this.getLoginStatus(res.data.id);
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+    getLoginStatus(id) {
+      this.axios
+        .post("qrcode/status", JSON.stringify({ id: id }))
+        .then(res => {
+          console.log(res);
+          localStorage.setItem("accessToken", res.data.accessToken);
+          localStorage.setItem("refreshToken", res.data.refreshToken);
+          this.$store.commit("login", res.data.accessToken);
+          this.$store.dispatch("userLoad", res.data.userId);
+          this.$router.replace({ path: "/" });
+        })
+        .catch(error => {
+          console.log(error);
+          this.$message({
+            showClose: true,
+            message: "二维码已过期",
+            type: "error"
+          });
+          this.disable = false;
+        });
+    },
+    refreshQRCode(){
+      this.disable=true;
+      this.getQRCode();
+
     }
   }
 };

@@ -138,9 +138,8 @@ export default {
         .then(response => {
           localStorage.setItem("accessToken", response.data.accessToken);
           localStorage.setItem("refreshToken", response.data.refreshToken);
-          localStorage.setItem("username", this.formRegister.username);
-          this.$store.commit('login',{accessToken:response.data.accessToken,username:this.formRegister.username});
-          this.$store.dispatch("userLoad", this.formRegister.username);
+          this.$store.commit("login", response.data.accessToken);
+          this.$store.dispatch("userLoad", response.data.userId);
           this.$router.go(0);
         })
         .catch(error => {

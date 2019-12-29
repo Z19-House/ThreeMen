@@ -12,9 +12,11 @@ export default new Vuex.Store({
     postId: ""
   },
   mutations: {
-    login(state, {accessToken, username}) {
+    login(state, accessToken) {
       state.token = "Bearer " + accessToken;
-      state.username = username;
+    },
+    username(state,username){
+      state.username=username;
     },
     userImage(state, userImage) {
       state.userImage = userImage;
@@ -37,6 +39,7 @@ export default new Vuex.Store({
       })
         .then(response => {
           context.commit('userImage',response.data.imageUrl);
+          context.commit('username',response.data.username)
         })
         .catch(error => {
           console.log(error);
