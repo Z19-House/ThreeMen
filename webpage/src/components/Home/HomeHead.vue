@@ -7,7 +7,7 @@
         </el-col>
         <el-col :span="3">
           <h2 />
-          <h1 style="font-size:30px; float:left;">FishBuy</h1>
+          <h1 style="font-size:30px; float:left;">摸 鱼</h1>
         </el-col>
       </router-link>
       <el-col :span="14">

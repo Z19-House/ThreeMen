@@ -85,6 +85,16 @@
                 </el-avatar>
                 <div class="commentUserNickName">{{comments.user.nickname}}</div>
               </div>
+              <div class="Operation" v-if="comments.user.username==username||details.user.username==username">
+                <el-dropdown @command="deleteComment">
+                  <span>
+                    <i class="el-icon-more" />
+                  </span>
+                  <el-dropdown-menu slot="dropdown">
+                    <el-dropdown-item :command="comments.commentId">删除</el-dropdown-item>
+                  </el-dropdown-menu>
+                </el-dropdown>
+              </div>
               <div class="commentContent">
                 <p class="commentP">{{comments.content}}</p>
                 <div class="clearfix"></div>
@@ -104,7 +114,7 @@
         <span>发布者：</span>
       </div>
       <router-link
-      target="_blank"
+        target="_blank"
         :to="{ name: 'user', params: { username: details.user.username } }"
         class="PublisherImage"
       >
@@ -293,6 +303,11 @@ p {
   text-overflow: ellipsis;
   overflow: hidden;
 }
+.commentItem .Operation {
+  height: 14px;
+  float: right;
+  display: block;
+}
 .comment .commentItem .commentUserNickName {
   width: 90px;
   white-space: nowrap;
@@ -329,6 +344,9 @@ export default {
   computed: {
     userImage() {
       return this.$store.state.userImage;
+    },
+    username() {
+      return this.$store.state.username;
     },
     postId() {
       // this.LoadMerchandise(this.$store.state.postId)
@@ -426,7 +444,7 @@ export default {
           .catch(error => {
             console.log(error);
           });
-      }else{
+      } else {
         this.axios({
           method: "delete",
           url: "collection/" + this.postId
@@ -438,6 +456,28 @@ export default {
             console.log(error);
           });
       }
+    },
+    deleteComment(command) {
+      console.log(command);
+      this.axios
+        .delete("post/" + this.postId + "/comment/" + command)
+        .then(res=>{
+          this.LoadMerchandise(this.postId);
+          this.$message({
+            type: "success",
+            message: "删除成功"
+          })
+          console.log(res)
+          }
+        )
+        .catch(error=>{
+          this.$message({
+            type: "error",
+            message: "删除失败,你不是管理员或者此商品的发布者或者评论的发布者，你无权删除此商品"
+          })
+          console.log(error)
+          }
+        );
     }
   }
 };

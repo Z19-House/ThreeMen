@@ -159,8 +159,8 @@ ul {
   width: 100%;
   margin-top: 20px;
   border: 1px solid #e5e9ef;
-  background: url(//s1.hdslb.com/bfs/static/jinkela/search/asserts/no_more.png)
-    70% 100% no-repeat;
+  /* background: url(//s1.hdslb.com/bfs/static/jinkela/search/asserts/no_more.png)
+    70% 100% no-repeat; */
   background-color: #fff;
   line-height: 440px;
   text-align: center;
