@@ -50,6 +50,7 @@ namespace fishbuy
 
             services.AddDbContext<FishbuyContext>(options =>
                 options.UseMySQL(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<QRCodeContext>(options => options.UseInMemoryDatabase(databaseName: "QRCodes"));
 
             services.AddControllers();
             services.AddTimedJob();
@@ -60,6 +61,7 @@ namespace fishbuy
             services.AddScoped<ICollectionRepository, CollectionRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<ISearchRepository, SearchRepository>();
+            services.AddScoped<IQRCodeRepository, QRCodeRepository>();
 
             services.AddRouting(options => options.LowercaseUrls = true);
 
