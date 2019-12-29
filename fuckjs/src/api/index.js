@@ -7,15 +7,25 @@ if (localStorage.getItem("AccessToken") !== null) {
 axios.defaults.headers.post['Content-Type'] = 'application/json';
 
 class api {
+    static getCancelToken() {
+        let CancelToken = axios.CancelToken;
+        let source = CancelToken.source();
+        return source;
+    }
+
+    static setUserInfo(data) {
+        localStorage.setItem("AccessToken", data.accessToken);
+        localStorage.setItem("RefreshToken", data.refreshToken);
+        axios.defaults.headers.common['Authorization'] = "bearer " + localStorage.getItem("AccessToken");
+    }
+
     static async signIn(username, password) {
         let response = await axios
             .post("/auth/signin", {
                 username,
                 password
             });
-        localStorage.setItem("AccessToken", response.data.accessToken);
-        localStorage.setItem("RefreshToken", response.data.refreshToken);
-        axios.defaults.headers.common['Authorization'] = "bearer " + localStorage.getItem("AccessToken");
+        this.setUserInfo(response.data);
         return response;
     }
 
@@ -58,6 +68,14 @@ class api {
 
     static deleteUser(username) {
         return axios.delete("/user/" + username);
+    }
+
+    static getQrCode() {
+        return axios.get("/qrcode/code");
+    }
+
+    static getQrCodeStatus(id,cancelToken) {
+        return axios.post("/qrcode/status", { id }, { cancelToken });
     }
 
     static uploadImage(data) {
