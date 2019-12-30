@@ -57,8 +57,8 @@ namespace fishbuy.Services
             var expiredTokens = await _QRcontext.QRTokens.Where(it => it.Expires < DateTime.UtcNow)
                 .ToListAsync();
             _logger.LogInformation($"{DateTime.Now}: Find {expiredTokens.Count} token expired.");
-            _context.RemoveRange(expiredTokens);
-            _context.SaveChanges();
+            _QRcontext.RemoveRange(expiredTokens);
+            _QRcontext.SaveChanges();
             _logger.LogInformation($"{DateTime.Now}: Clean expired QR token finished.");
         }
 
