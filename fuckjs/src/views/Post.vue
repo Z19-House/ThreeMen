@@ -42,14 +42,20 @@
           <div class="text-h5 text-red">￥{{ post.price }}</div>
           <div class="text-h6">{{ post.title }}</div>
           <TagsComponent :tags="post.tags" />
-          <div class="text-subtitle2" style="color:gray" >发布时间：{{ new Date( `${post.upTime}Z`).toLocaleString("chinese", { hour12: false }) }}</div>
+          <div
+            class="text-subtitle2"
+            style="color:gray"
+          >发布时间：{{ new Date( `${post.upTime}Z`).toLocaleString("chinese", { hour12: false }) }}</div>
         </q-card-section>
 
         <q-separator />
 
         <q-card-section>
           <pre class="text-subtitle2">{{ post.content }}</pre>
-          <div class="text-subtitle2" style="color:gray" >编辑时间：{{ new Date( `${post.editTime}Z`).toLocaleString("chinese", { hour12: false }) }}</div>
+          <div
+            class="text-subtitle2"
+            style="color:gray"
+          >编辑时间：{{ new Date( `${post.editTime}Z`).toLocaleString("chinese", { hour12: false }) }}</div>
         </q-card-section>
 
         <q-separator />
@@ -117,7 +123,7 @@
         </div>
       </q-card>
 
-      <q-page-sticky position="bottom-right" :offset="[18, 90]">
+      <q-page-sticky v-if="$store.state.userId" position="bottom-right" :offset="[18, 90]">
         <q-btn
           fab
           :icon="collected ? 'star' : 'star_border'"
@@ -125,7 +131,7 @@
           @click="confirmCollect = true"
         />
       </q-page-sticky>
-      <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-page-sticky v-if="$store.state.userId" position="bottom-right" :offset="[18, 18]">
         <q-btn fab icon="message" color="accent" @click="inputComment = true" />
       </q-page-sticky>
 
