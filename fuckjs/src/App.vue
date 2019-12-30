@@ -132,13 +132,15 @@ export default {
     }
   },
   async created() {
-    let user = (await api.getUserInfo(this.username)).data;
-    this.$store.commit("setUser", {
-      userId: user.userId,
-      username: user.username,
-      userImage: user.imageUrl,
-      userGroup: user.userGroup
-    });
+    if (this.username) {
+      let user = (await api.getUserInfo(this.username)).data;
+      this.$store.commit("setUser", {
+        userId: user.userId,
+        username: user.username,
+        userImage: user.imageUrl,
+        userGroup: user.userGroup
+      });
+    }
   }
 };
 </script>
