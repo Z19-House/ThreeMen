@@ -39,6 +39,7 @@ export default new Vuex.Store({
       })
         .then(response => {
           context.commit('userImage',response.data.imageUrl);
+          localStorage.setItem("username",response.data.username);
           context.commit('username',response.data.username)
         })
         .catch(error => {

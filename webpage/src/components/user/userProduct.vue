@@ -300,6 +300,7 @@ export default {
             i++;
           }
           console.log(response.data, this.page, this.total, j, pages);
+          if(this.currentPage!=1)this.loadOtherPage(this.currentPage)
         })
         .catch(error => {
           console.log(error);
