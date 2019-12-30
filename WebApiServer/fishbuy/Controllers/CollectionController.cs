@@ -13,7 +13,7 @@ namespace fishbuy.Controllers
 {
     [Authorize]
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class CollectionController : ControllerBase
     {

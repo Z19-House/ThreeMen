@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-axios.defaults.baseURL = 'http://118.25.64.161/api';
+axios.defaults.baseURL = 'https://api.z19.site/';
 if (localStorage.getItem("AccessToken") !== null) {
     axios.defaults.headers.common['Authorization'] = "bearer " + localStorage.getItem("AccessToken");
 }

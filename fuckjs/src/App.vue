@@ -29,8 +29,7 @@
 
         <q-btn round>
           <q-avatar size="42px">
-            <q-img v-if="userImage" :src="userImage" />
-            <q-img v-else src="http://118.25.64.161/images/efd0fc7d20532fdaf769a25683617711.png" />
+            <q-img :src="userImage ? userImage : require('./assets/placeholder.png')" />
           </q-avatar>
           <q-menu auto-close>
             <q-list v-if="!userId" style="min-width: 100px">

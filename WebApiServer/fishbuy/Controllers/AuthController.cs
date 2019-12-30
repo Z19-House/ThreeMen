@@ -21,7 +21,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace fishbuy.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {

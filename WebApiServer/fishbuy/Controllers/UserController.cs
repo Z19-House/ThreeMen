@@ -19,7 +19,7 @@ using fishbuy.Repositories;
 namespace fishbuy.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class UserController : ControllerBase
     {

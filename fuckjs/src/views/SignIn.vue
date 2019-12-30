@@ -46,7 +46,7 @@
         @click="signInWithQRCode"
         style="height:200px;width:200px;padding:0;border:0"
       >
-        <img src="../assets/QRCodeInvalid.png" style="height:200px;width:200px" />
+        <q-img :src="require('../assets/QRCodeInvalid.png')" sizes="200px" />
       </button>
       <q-btn color="secondary" label="密码登录" @click="useQRCode = false" />
     </div>

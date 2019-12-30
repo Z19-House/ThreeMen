@@ -13,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace fishbuy.Controllers
 {
     [Produces("application/json")]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class SearchController : ControllerBase
     {
