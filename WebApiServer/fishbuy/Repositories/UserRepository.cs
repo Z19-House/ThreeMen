@@ -57,6 +57,7 @@ namespace fishbuy.Repositories
                 return null;
             }
             _context.RefreshToken.RemoveRange(_context.RefreshToken.Where(it => it.UserId == item.UserId));
+            _context.Comment.RemoveRange(_context.Comment.Where(it => it.UserId == item.UserId));
             _context.User.Remove(item);
             _context.SaveChanges();
             return item;
