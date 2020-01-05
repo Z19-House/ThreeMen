@@ -1,4 +1,4 @@
-# fuckjs
+# mobile-fish
 
 ## Project setup
 ```
