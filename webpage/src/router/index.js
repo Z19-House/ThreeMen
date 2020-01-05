@@ -73,7 +73,7 @@ const routes = [
       isDisplay: route.params.isDisplay
     }),
     beforeEnter: (to, from, next) => {
-      if (localStorage.getItem("accessToken")) {     //如果localStorage里存了用户名，则表示已登录
+      if (localStorage.getItem("accessToken")) {     //如果localStorage里存了token，则表示已登录
         next(true);
       } else {
         next('/login');

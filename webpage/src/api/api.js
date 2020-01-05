@@ -5,7 +5,7 @@ import store from '@/store/index';
 
 Vue.use(VueAxios, axios)
 
-axios.defaults.baseURL = 'http://118.25.64.161/api/';
+axios.defaults.baseURL = 'https://api.z19.site/';
 axios.defaults.headers.post['Content-Type'] ="application/json";
 axios.defaults.headers.put['Content-Type'] ="application/json";
 

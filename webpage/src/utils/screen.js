@@ -10,8 +10,6 @@ export function getScrollTop(){
     return scrollTop;
   }
   
-  
-  
   //文档的总高度
   export function getScrollHeight(){
     var scrollHeight = 0, bodyScrollHeight = 0, documentScrollHeight = 0;
@@ -24,8 +22,6 @@ export function getScrollTop(){
     scrollHeight = (bodyScrollHeight - documentScrollHeight > 0) ? bodyScrollHeight : documentScrollHeight;
     return scrollHeight;
   }
-  
-  
   
   //浏览器视口的高度
   export function getWindowHeight(){

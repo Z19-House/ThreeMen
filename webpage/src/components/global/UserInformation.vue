@@ -17,7 +17,7 @@
               <el-upload
                 :disabled="(isDisplay==1)"
                 class="avatar-uploader"
-                action="http://118.25.64.161/api/image/upload"
+                action="https://api.z19.site/image/upload"
                 name="formfile"
                 :headers="heads"
                 :show-file-list="false"

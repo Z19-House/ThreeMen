@@ -32,7 +32,7 @@
         <el-form-item label="上传图片" style="text-align: left;" prop="medias">
           <el-upload
             class="upload-demo"
-            action="http://118.25.64.161/api/image/upload"
+            action="https://api.z19.site/image/upload"
             :on-preview="handlePreview"
             :on-remove="imageRemove"
             list-type="picture"
